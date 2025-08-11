@@ -66,9 +66,8 @@ class LivestreamManager {
   }
 
   joinChat() {
-    const username =
-      prompt('Ingresa tu nombre para el chat:') ||
-      `Usuario_${Math.floor(Math.random() * 1000)}`;
+    // Usar nombre automático según PROMPT_UI_FIXES.md
+    const username = `Usuario_${Math.floor(Math.random() * 1000)}`;
     this.username = username;
 
     this.socket.emit('join-livestream-chat', { username });
@@ -80,7 +79,7 @@ class LivestreamManager {
     if (messageInput) messageInput.disabled = false;
     if (sendBtn) sendBtn.disabled = false;
 
-    this.addSystemMessage(`¡Bienvenido al chat, ${username}!`);
+    this.addSystemMessage(`${username} se unió al chat`);
   }
 
   sendMessage() {

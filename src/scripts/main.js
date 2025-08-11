@@ -2782,11 +2782,7 @@ function setupVideoPicker() {
             );
             const pwd = window.ZOOM_MEETING_PWD || '';
             if (!meetingId) {
-              if (notice) {
-                notice.style.display = 'block';
-                notice.textContent =
-                  'Configura window.ZOOM_MEETING_ID y window.ZOOM_MEETING_PWD para cargar el Web Client de Zoom dentro de la app.';
-              }
+              // Silently return without showing configuration message
               return;
             }
             const zoomUrl = `https://zoom.us/wc/${meetingId}/join?pwd=${encodeURIComponent(pwd)}`;

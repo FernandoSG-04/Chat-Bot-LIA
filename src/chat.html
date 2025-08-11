@@ -102,6 +102,12 @@
                 <i class="bx bx-chevron-down"></i>
               </button>
             </div>
+
+            <!-- Botón para unirse al chat movido aquí según PROMPT_UI_FIXES.md -->
+            <button id="joinLivestreamBtn" class="livestream-join-btn">
+              <i class="bx bx-message-dots"></i>
+              Unirse al Chat en Vivo
+            </button>
             <div class="collapsible-content" id="livestreamContent">
               <div
                 id="leftLivestreamPlayer"
@@ -113,12 +119,6 @@
                 class="note"
                 style="margin-top: 8px; display: none"
               ></div>
-
-              <!-- Botón para unirse al chat -->
-              <button id="joinLivestreamBtn" class="keyboard-button">
-                <i class="bx bx-message-dots"></i>
-                Unirse al Chat en Vivo
-              </button>
 
               <!-- Chat del Livestream -->
               <div class="livestream-chat-container">
@@ -166,13 +166,6 @@
                 </div>
               </div>
             </div>
-          </div>
-          <div class="tool-group">
-            <div
-              id="leftVideoPlayerContainer"
-              class="left-video-player"
-              aria-label="Reproductor de video"
-            ></div>
           </div>
         </nav>
         <div class="left-resizer" id="leftResizer" title="Ajustar ancho"></div>

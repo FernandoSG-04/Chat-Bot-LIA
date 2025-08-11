@@ -3034,20 +3034,32 @@ a:focus-visible,
   border-left: 4px solid rgba(68, 229, 255, 0.5);
 }
 
-/* Botón para unirse al livestream */
-#joinLivestreamBtn {
-  width: 100%;
-  padding: 8px 12px;
-  background: rgba(68, 229, 255, 0.2);
-  border: 1px solid rgba(68, 229, 255, 0.3);
-  border-radius: 6px;
-  color: var(--text-on-dark);
+/* Botón para unirse al livestream según PROMPT_UI_FIXES.md */
+.livestream-join-btn {
+  background: linear-gradient(135deg, #00d4aa, #0099cc);
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
   cursor: pointer;
-  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 10px;
+  width: 100%;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
-#joinLivestreamBtn:hover {
-  background: rgba(68, 229, 255, 0.25);
+.livestream-join-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 212, 170, 0.3);
+}
+
+.livestream-join-btn i {
+  font-size: 16px;
 }
 
 /* Estilos adicionales para livestream */
