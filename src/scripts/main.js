@@ -1,48 +1,136 @@
 // Configuración del chatbot según PROMPT_CLAUDE.md
 const CHATBOT_CONFIG = {
-    name: 'Lia IA',
-    typingSpeed: 50,
-    responseDelay: 1000,
-    audioEnabled: true,
-    welcomeAudio: {
-        src: 'assets/audio/welcome.mp3',
-        volume: 0.7
-    },
-    // Configuración de OpenAI (se cargará desde variables de entorno)
-    openai: {
-        apiKey: null, // Se cargará dinámicamente
-        model: 'gpt-4',
-        maxTokens: 1000,
-        temperature: 0.7
-    },
-    // Configuración de base de datos (se cargará desde variables de entorno)
-    database: {
-        url: null // Se cargará dinámicamente
-    }
+  name: 'Lia IA',
+  typingSpeed: 50,
+  responseDelay: 1000,
+  audioEnabled: true,
+  welcomeAudio: {
+    src: 'assets/audio/welcome.mp3',
+    volume: 0.7,
+  },
+  // Configuración de OpenAI (se cargará desde variables de entorno)
+  openai: {
+    apiKey: null, // Se cargará dinámicamente
+    model: 'gpt-4',
+    maxTokens: 1000,
+    temperature: 0.7,
+  },
+  // Configuración de base de datos (se cargará desde variables de entorno)
+  database: {
+    url: null, // Se cargará dinámicamente
+  },
 };
 
 // Estructura del curso: solo títulos de sesiones y módulos
 const COURSE_SESSIONS = {
-    '1': { title: 'Sesión 1: Descubriendo la IA para Profesionales' },
-    '2': { title: 'Sesión 2: Fundamentos de Machine Learning' },
-    '3': { title: 'Sesión 3: Deep Learning y Casos Prácticos' },
-    '4': { title: 'Sesión 4: Aplicaciones, Ética y Proyecto Final' }
+  1: { title: 'Sesión 1: Descubriendo la IA para Profesionales' },
+  2: { title: 'Sesión 2: Fundamentos de Machine Learning' },
+  3: { title: 'Sesión 3: Deep Learning y Casos Prácticos' },
+  4: { title: 'Sesión 4: Aplicaciones, Ética y Proyecto Final' },
+};
+
+// Sistema de gestión de sesiones y módulos
+const SESSION_MODULES = {
+  1: {
+    title: 'Sesión 1: Descubriendo la IA para Profesionales',
+    modules: [
+      {
+        id: 1,
+        title: 'Módulo 1: Introducción a IA',
+        content: 'Conceptos básicos y evolución',
+      },
+      {
+        id: 2,
+        title: 'Módulo 2: Fundamentos de ML',
+        content: 'Algoritmos y aplicaciones',
+      },
+      {
+        id: 3,
+        title: 'Módulo 3: Deep Learning',
+        content: 'Redes neuronales y casos de uso',
+      },
+      {
+        id: 4,
+        title: 'Módulo 4: Proyecto Final',
+        content: 'Aplicación práctica completa',
+      },
+    ],
+  },
+  2: {
+    title: 'Sesión 2: Fundamentos de Machine Learning',
+    modules: [
+      {
+        id: 1,
+        title: 'Módulo 1: Supervisado',
+        content: 'Clasificación y regresión',
+      },
+      {
+        id: 2,
+        title: 'Módulo 2: No Supervisado',
+        content: 'Clustering y reducción',
+      },
+      {
+        id: 3,
+        title: 'Módulo 3: Evaluación',
+        content: 'Métricas y validación',
+      },
+      {
+        id: 4,
+        title: 'Módulo 4: Optimización',
+        content: 'Hiperparámetros y tuning',
+      },
+    ],
+  },
+  3: {
+    title: 'Sesión 3: Deep Learning y Casos Prácticos',
+    modules: [
+      {
+        id: 1,
+        title: 'Módulo 1: Redes Neuronales',
+        content: 'Arquitecturas básicas',
+      },
+      { id: 2, title: 'Módulo 2: CNN', content: 'Procesamiento de imágenes' },
+      { id: 3, title: 'Módulo 3: RNN/LSTM', content: 'Secuencias y tiempo' },
+      {
+        id: 4,
+        title: 'Módulo 4: Transformers',
+        content: 'Atención y lenguaje',
+      },
+    ],
+  },
+  4: {
+    title: 'Sesión 4: Aplicaciones, Ética y Proyecto Final',
+    modules: [
+      {
+        id: 1,
+        title: 'Módulo 1: Aplicaciones',
+        content: 'Casos de uso reales',
+      },
+      { id: 2, title: 'Módulo 2: Ética', content: 'Responsabilidad y sesgos' },
+      {
+        id: 3,
+        title: 'Módulo 3: Deployment',
+        content: 'Producción y escalabilidad',
+      },
+      { id: 4, title: 'Módulo 4: Proyecto', content: 'Desarrollo completo' },
+    ],
+  },
 };
 
 // Estado del chatbot
 let chatState = {
-    isTyping: false,
-    conversationHistory: [],
-    currentTopic: null,
-    audioContext: null,
-    audioEnabled: true,
-    userName: '',
-    currentState: 'start',
-    dbConnection: null,
-    // Token para cancelar escritura simulada en curso
-    typingToken: 0,
-    // Referencia a audio en reproducción (bienvenida u otros)
-    currentAudio: null
+  isTyping: false,
+  conversationHistory: [],
+  currentTopic: null,
+  audioContext: null,
+  audioEnabled: true,
+  userName: '',
+  currentState: 'start',
+  dbConnection: null,
+  // Token para cancelar escritura simulada en curso
+  typingToken: 0,
+  // Referencia a audio en reproducción (bienvenida u otros)
+  currentAudio: null,
 };
 
 // Elementos del DOM
@@ -54,7 +142,7 @@ const inputContainer = document.getElementById('inputContainer');
 
 // HTML helpers para avatares estilo Messenger
 function getBotAvatarHTML() {
-    return `
+  return `
         <div class="msg-avatar bot">
             <div class="avatar-circle">
                 <img src="assets/images/AprendeIA.png" alt="Lia IA" onerror="this.onerror=null;this.src='assets/images/AprendeIA.jpg'" />
@@ -64,7 +152,7 @@ function getBotAvatarHTML() {
 }
 
 function getUserAvatarHTML() {
-    return `
+  return `
         <div class="msg-avatar user">
             <div class="avatar-circle"><i class='bx bx-user'></i></div>
         </div>
@@ -72,396 +160,483 @@ function getUserAvatarHTML() {
 }
 
 // Inicialización
-document.addEventListener('DOMContentLoaded', function() {
-    // EventBus y UI API para el nuevo layout tipo NotebookLM
-    setupEventBusAndUI();
-    initializeSecurity();
-    initializeAudio();
-    loadAudioPreference();
-    initializeDatabase();
-    playChatOpenAnimation().then(() => {
+document.addEventListener('DOMContentLoaded', function () {
+  // EventBus y UI API para el nuevo layout tipo NotebookLM
+  setupEventBusAndUI();
+  initializeSecurity();
+  initializeAudio();
+  loadAudioPreference();
+  initializeDatabase();
+  playChatOpenAnimation().then(() => {
     initializeChat();
-    });
-    setupEventListeners();
-    setupResizableLeft();
-    setupVideoPicker();
-    setupAvatarLightbox();
-    // Sincronizar estado inicial del botón de acción
-    if (messageInput.value.trim().length > 0) {
-        inputContainer.classList.add('input-has-text');
-    } else {
-        inputContainer.classList.remove('input-has-text');
-    }
+  });
+  setupEventListeners();
+  setupResizableLeft();
+  setupVideoPicker();
+  setupAvatarLightbox();
+  // Sincronizar estado inicial del botón de acción
+  if (messageInput.value.trim().length > 0) {
+    inputContainer.classList.add('input-has-text');
+  } else {
+    inputContainer.classList.remove('input-has-text');
+  }
 });
 
 // Animación de apertura del contenedor de chat
 function playChatOpenAnimation() {
-    return new Promise((resolve) => {
-        try {
-            const container = document.querySelector('.telegram-container');
-            if (!container) return resolve();
+  return new Promise(resolve => {
+    try {
+      const container = document.querySelector('.telegram-container');
+      if (!container) return resolve();
 
-            // Respetar preferencias de accesibilidad
-            const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            if (prefersReducedMotion) return resolve();
+      // Respetar preferencias de accesibilidad
+      const prefersReducedMotion =
+        window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReducedMotion) return resolve();
 
-            // Animación simple y limpia: fade + scale del contenedor
-            container.classList.add('chat-open-start');
-            // forzar reflow
-            void container.offsetWidth;
-            container.classList.add('chat-open-animate');
+      // Animación simple y limpia: fade + scale del contenedor
+      container.classList.add('chat-open-start');
+      // forzar reflow
+      void container.offsetWidth;
+      container.classList.add('chat-open-animate');
 
-            const onEnd = () => {
-                container.removeEventListener('animationend', onEnd);
-                container.classList.remove('chat-open-start', 'chat-open-animate');
-                resolve();
-            };
+      const onEnd = () => {
+        container.removeEventListener('animationend', onEnd);
+        container.classList.remove('chat-open-start', 'chat-open-animate');
+        resolve();
+      };
 
-            container.addEventListener('animationend', onEnd);
-            setTimeout(onEnd, 1200);
-        } catch (_) {
-            resolve();
-        }
-    });
+      container.addEventListener('animationend', onEnd);
+      setTimeout(onEnd, 1200);
+    } catch (_) {
+      resolve();
+    }
+  });
 }
 
 // Inicializar configuración de seguridad
 async function initializeSecurity() {
-    try {
-        // Cargar configuración desde el servidor de forma segura
-        const configResponse = await fetch('/api/config', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-API-Key': getApiKey(),
-                ...getUserAuthHeaders(),
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            credentials: 'same-origin'
-        });
+  try {
+    // Cargar configuración desde el servidor de forma segura
+    const configResponse = await fetch('/api/config', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-Key': getApiKey(),
+        ...getUserAuthHeaders(),
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+      credentials: 'same-origin',
+    });
 
-        if (configResponse.ok) {
-            const config = await configResponse.json();
-            CHATBOT_CONFIG.openai.model = config.openaiModel || 'gpt-4';
-            CHATBOT_CONFIG.openai.maxTokens = config.maxTokens || 1000;
-            CHATBOT_CONFIG.openai.temperature = config.temperature || 0.7;
-            CHATBOT_CONFIG.audioEnabled = config.audioEnabled !== false;
-            console.log('Configuración cargada de forma segura');
-        } else {
-            console.warn('No se pudo cargar la configuración del servidor');
-        }
-    } catch (error) {
-        console.warn('Error cargando configuración:', error);
+    if (configResponse.ok) {
+      const config = await configResponse.json();
+      CHATBOT_CONFIG.openai.model = config.openaiModel || 'gpt-4';
+      CHATBOT_CONFIG.openai.maxTokens = config.maxTokens || 1000;
+      CHATBOT_CONFIG.openai.temperature = config.temperature || 0.7;
+      CHATBOT_CONFIG.audioEnabled = config.audioEnabled !== false;
+      console.log('Configuración cargada de forma segura');
+    } else {
+      console.warn('No se pudo cargar la configuración del servidor');
     }
+  } catch (error) {
+    console.warn('Error cargando configuración:', error);
+  }
 }
 
 // Inicializar sistema de audio
 function initializeAudio() {
-    try {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        if (AudioContext) {
-            chatState.audioContext = new AudioContext();
-        }
-    } catch (error) {
-        console.warn('Audio no soportado:', error);
-        chatState.audioEnabled = false;
+  try {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (AudioContext) {
+      chatState.audioContext = new AudioContext();
     }
+  } catch (error) {
+    console.warn('Audio no soportado:', error);
+    chatState.audioEnabled = false;
+  }
 }
 
 // Cargar preferencia de audio tempranamente para que afecte la bienvenida
 function loadAudioPreference() {
-    try {
-        const saved = localStorage.getItem('chat_audio_enabled');
-        if (saved !== null) {
-            const enabled = JSON.parse(saved);
-            chatState.audioEnabled = !!enabled;
-            if (!enabled && audioToggle) audioToggle.classList.add('muted');
-        }
-    } catch(_) {}
+  try {
+    const saved = localStorage.getItem('chat_audio_enabled');
+    if (saved !== null) {
+      const enabled = JSON.parse(saved);
+      chatState.audioEnabled = !!enabled;
+      if (!enabled && audioToggle) audioToggle.classList.add('muted');
+    }
+  } catch (_) {}
 }
 
 // Inicializar conexión a base de datos
 async function initializeDatabase() {
-    try {
-        if (!CHATBOT_CONFIG.database.url) {
-            console.warn('URL de base de datos no configurada');
-            return;
-        }
-        console.log('Configuración de base de datos cargada');
-    } catch (error) {
-        console.warn('Error inicializando base de datos:', error);
+  try {
+    if (!CHATBOT_CONFIG.database.url) {
+      console.warn('URL de base de datos no configurada');
+      return;
     }
+    console.log('Configuración de base de datos cargada');
+  } catch (error) {
+    console.warn('Error inicializando base de datos:', error);
+  }
 }
 
 // Inicializar el chat
 function initializeChat() {
-    // Secuencia con escritura simulada
-    (async () => {
-        // Obtener nombre del usuario desde session/local storage
-        try {
-            const storedName = sessionStorage.getItem('loggedUser') || localStorage.getItem('rememberedUser');
-            if (storedName) {
-                chatState.userName = storedName;
-            }
-        } catch (_) {}
+  // Secuencia con escritura simulada
+  (async () => {
+    // Obtener nombre del usuario desde session/local storage
+    try {
+      const storedName =
+        sessionStorage.getItem('loggedUser') ||
+        localStorage.getItem('rememberedUser');
+      if (storedName) {
+        chatState.userName = storedName;
+      }
+    } catch (_) {}
 
-        const greeting = chatState.userName
-            ? `¡Hola, ${chatState.userName}!  Bienvenido a Lia IA.\n\nSoy tu asistente virtual y estaré aquí para acompañarte durante tu aprendizaje en IA.`
-            : `¡Hola!  Bienvenido a Lia IA.\n\nSoy tu asistente virtual y estaré aquí para acompañarte durante tu aprendizaje en IA.`;
+    const greeting = chatState.userName
+      ? `¡Hola, ${chatState.userName}!  Bienvenido a Lia IA.\n\nSoy tu asistente virtual y estaré aquí para acompañarte durante tu aprendizaje en IA.`
+      : `¡Hola!  Bienvenido a Lia IA.\n\nSoy tu asistente virtual y estaré aquí para acompañarte durante tu aprendizaje en IA.`;
 
-        await sendBotMessage(greeting, null, false, true);
-        await showWelcomeInstructions();
-        // Menú inline eliminado: ahora el panel izquierdo contiene las herramientas
-    })();
+    await sendBotMessage(greeting, null, false, true);
+    await showWelcomeInstructions();
+    // Menú inline eliminado: ahora el panel izquierdo contiene las herramientas
+  })();
 }
 
 // Reproducir audio de bienvenida
 function playWelcomeAudio() {
-    if (!chatState.audioEnabled || !CHATBOT_CONFIG.audioEnabled) return;
+  if (!chatState.audioEnabled || !CHATBOT_CONFIG.audioEnabled) return;
 
-    if ('speechSynthesis' in window) {
-        playWelcomeSpeech();
-    } else {
-        playWelcomeAudioFile();
-    }
+  if ('speechSynthesis' in window) {
+    playWelcomeSpeech();
+  } else {
+    playWelcomeAudioFile();
+  }
 }
 
 // Reproducir audio usando Web Speech API
 function playWelcomeSpeech() {
-    try {
-        const welcomeText = "¡Hola! Bienvenido a Lia IA. Soy tu asistente virtual y estaré aquí para acompañarte durante tu aprendizaje en IA.";
-        const utterance = new SpeechSynthesisUtterance(welcomeText);
-        utterance.lang = 'es-ES';
-        utterance.rate = 0.85;
-        utterance.pitch = 1.0;
-        utterance.volume = chatState.audioEnabled ? CHATBOT_CONFIG.welcomeAudio.volume : 0;
-        
-        const voices = speechSynthesis.getVoices();
-        const spanishVoice = voices.find(voice => voice.lang.includes('es'));
-        if (spanishVoice) {
-            utterance.voice = spanishVoice;
-        }
-        
-        // Guardar referencia para poder cancelar o silenciar dinámicamente
-        chatState.currentAudio = utterance;
-        speechSynthesis.cancel(); // asegurar que no haya colas
-        speechSynthesis.speak(utterance);
-        console.log('Audio de bienvenida reproducido con Web Speech API');
-    } catch (error) {
-        console.warn('Error reproduciendo audio con Web Speech API:', error);
-        playWelcomeAudioFile();
+  try {
+    const welcomeText =
+      '¡Hola! Bienvenido a Lia IA. Soy tu asistente virtual y estaré aquí para acompañarte durante tu aprendizaje en IA.';
+    const utterance = new SpeechSynthesisUtterance(welcomeText);
+    utterance.lang = 'es-ES';
+    utterance.rate = 0.85;
+    utterance.pitch = 1.0;
+    utterance.volume = chatState.audioEnabled
+      ? CHATBOT_CONFIG.welcomeAudio.volume
+      : 0;
+
+    const voices = speechSynthesis.getVoices();
+    const spanishVoice = voices.find(voice => voice.lang.includes('es'));
+    if (spanishVoice) {
+      utterance.voice = spanishVoice;
     }
+
+    // Guardar referencia para poder cancelar o silenciar dinámicamente
+    chatState.currentAudio = utterance;
+    speechSynthesis.cancel(); // asegurar que no haya colas
+    speechSynthesis.speak(utterance);
+    console.log('Audio de bienvenida reproducido con Web Speech API');
+  } catch (error) {
+    console.warn('Error reproduciendo audio con Web Speech API:', error);
+    playWelcomeAudioFile();
+  }
 }
 
 // Reproducir archivo de audio de bienvenida
 function playWelcomeAudioFile() {
-    try {
-        const audio = new Audio(CHATBOT_CONFIG.welcomeAudio.src);
-        audio.volume = chatState.audioEnabled ? CHATBOT_CONFIG.welcomeAudio.volume : 0;
-        chatState.currentAudio = audio;
-        
-        const playPromise = audio.play();
-        
-        if (playPromise !== undefined) {
-            playPromise
-                .then(() => {
-                    console.log('Audio de bienvenida reproducido exitosamente');
-                })
-                .catch(error => {
-                    console.warn('Error reproduciendo audio de bienvenida:', error);
-                });
-        }
-    } catch (error) {
-        console.warn('Error inicializando audio de bienvenida:', error);
+  try {
+    const audio = new Audio(CHATBOT_CONFIG.welcomeAudio.src);
+    audio.volume = chatState.audioEnabled
+      ? CHATBOT_CONFIG.welcomeAudio.volume
+      : 0;
+    chatState.currentAudio = audio;
+
+    const playPromise = audio.play();
+
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          console.log('Audio de bienvenida reproducido exitosamente');
+        })
+        .catch(error => {
+          console.warn('Error reproduciendo audio de bienvenida:', error);
+        });
     }
+  } catch (error) {
+    console.warn('Error inicializando audio de bienvenida:', error);
+  }
 }
 
 // Configurar event listeners
 function setupEventListeners() {
-    messageInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            sendMessage();
-        }
-    });
-
-    // Ya no hay sendButton; se usa actionButton
-
-    // Mostrar botón enviar si hay texto; micrófono si está vacío
-    const updateActionState = () => {
-        if (messageInput.value.trim().length > 0) {
-            inputContainer.classList.add('input-has-text');
-        } else {
-            inputContainer.classList.remove('input-has-text');
-        }
-    };
-    messageInput.addEventListener('input', updateActionState);
-    messageInput.addEventListener('keyup', updateActionState);
-    messageInput.addEventListener('change', updateActionState);
-
-    // Toggle de audio y persistencia
-    if (audioToggle) {
-        audioToggle.addEventListener('click', (ev) => {
-            ev.preventDefault();
-            ev.stopPropagation();
-            const newState = toggleAudio();
-            if (!newState) audioToggle.classList.add('muted'); else audioToggle.classList.remove('muted');
-            try { localStorage.setItem('chat_audio_enabled', JSON.stringify(newState)); } catch(_){ }
-        });
+  messageInput.addEventListener('keypress', function (e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
     }
+  });
 
-    // Cargar preferencia de audio (sin forzar toggle de lógica)
-    try {
-        const saved = localStorage.getItem('chat_audio_enabled');
-        if (saved !== null) {
-            const enabled = JSON.parse(saved);
-            chatState.audioEnabled = !!enabled;
-            if (audioToggle) { if (!enabled) audioToggle.classList.add('muted'); else audioToggle.classList.remove('muted'); }
-        }
-    } catch(_){ }
+  // Ya no hay sendButton; se usa actionButton
 
-    // Micrófono: placeholder para reconocimiento de voz
-    // Acción dual: enviar cuando hay texto; grabar voz cuando está vacío
-    actionButton.addEventListener('mousedown', (ev) => {
-        ev.preventDefault();
-        ev.stopPropagation();
-        // Cancelar cualquier escritura simulada pendiente del bot
-        chatState.typingToken++;
-        hideTypingIndicator();
-        setHeaderTyping(false);
-        chatState.isTyping = false;
-        if (messageInput.value.trim().length === 0) {
-            document.getElementById('inputContainer')?.classList.add('recording');
-            startVoiceInputUI();
-        }
-    });
-
-    actionButton.addEventListener('mouseup', () => {
-        // Si está grabando, detener
-        if (mediaRecorder && mediaRecorder.state === 'recording') {
-            mediaRecorder.stop();
-        }
-    });
-
-    actionButton.addEventListener('click', (ev) => {
-        // Con texto: enviar (click estándar)
-        if (messageInput.value.trim().length > 0) {
-            ev.preventDefault();
-            sendMessage();
-        }
-    });
-
-    // Conectar botones del panel izquierdo (tool-list)
-    try {
-        document.querySelectorAll('.tool-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const action = btn.getAttribute('data-action');
-                switch(action) {
-                    case 'open-notes': EventBus.emit('ui:openNotes'); break;
-                    case 'open-glossary': EventBus.emit('ui:openGlossary'); break;
-                    case 'open-audio': EventBus.emit('ui:openAudio'); break;
-                    case 'open-video': EventBus.emit('ui:openVideo'); break;
-                    case 'open-report': EventBus.emit('ui:openReport'); break;
-                    case 'copy-prompts': EventBus.emit('ui:copyPrompts'); break;
-                    case 'open-quizzes': EventBus.emit('ui:openQuizzes'); break;
-                    case 'open-faq': EventBus.emit('ui:openFAQ'); break;
-                    case 'open-zoom': EventBus.emit('ui:openZoom'); break;
-                    case 'open-teachers': EventBus.emit('ui:openTeachers'); break;
-                }
-            });
-        });
-        // Toggles de colapso
-        const root = document.body;
-        document.getElementById('collapseLeft')?.addEventListener('click', () => {
-            root.classList.toggle('left-collapsed');
-        });
-        document.getElementById('collapseRight')?.addEventListener('click', () => {
-            root.classList.toggle('right-collapsed');
-        });
-        // Acciones del rail (si visible)
-        const railButtons = document.querySelectorAll('.studio-rail .rail-btn');
-        if (railButtons && railButtons.length) {
-            railButtons.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const action = btn.getAttribute('data-action');
-                    switch(action) {
-                        case 'open-audio': EventBus.emit('ui:openAudio'); break;
-                        case 'open-video': EventBus.emit('ui:openVideo'); break;
-                        case 'open-report': EventBus.emit('ui:openReport'); break;
-                        case 'open-notes': EventBus.emit('ui:openNotes'); break;
-                        case 'open-zoom': EventBus.emit('ui:openZoom'); break;
-                        case 'open-teachers': EventBus.emit('ui:openTeachers'); break;
-                    }
-                });
-            });
-        }
-        // Asegurar eventos para tiles del panel derecho (aún cuando colapsa/expande)
-        document.querySelectorAll('.studio-tiles .tile').forEach(tile => {
-            tile.addEventListener('click', () => {
-                const action = tile.getAttribute('data-action');
-                switch(action) {
-                    case 'open-audio': EventBus.emit('ui:openAudio'); break;
-                    case 'open-video': EventBus.emit('ui:openVideo'); break;
-                    case 'open-report': EventBus.emit('ui:openReport'); break;
-                    case 'open-notes': EventBus.emit('ui:openNotes'); break;
-                    case 'open-zoom': EventBus.emit('ui:openZoom'); break;
-                    case 'open-teachers': EventBus.emit('ui:openTeachers'); break;
-                }
-            });
-        });
-    } catch(_){}
-
-    // Forzar primer estado
+  // Mostrar botón enviar si hay texto; micrófono si está vacío
+  const updateActionState = () => {
     if (messageInput.value.trim().length > 0) {
-        inputContainer.classList.add('input-has-text');
+      inputContainer.classList.add('input-has-text');
     } else {
-        inputContainer.classList.remove('input-has-text');
+      inputContainer.classList.remove('input-has-text');
     }
+  };
+  messageInput.addEventListener('input', updateActionState);
+  messageInput.addEventListener('keyup', updateActionState);
+  messageInput.addEventListener('change', updateActionState);
 
-    messageInput.addEventListener('input', function() {
-        this.style.height = 'auto';
-        this.style.height = this.scrollHeight + 'px';
+  // Toggle de audio y persistencia
+  if (audioToggle) {
+    audioToggle.addEventListener('click', ev => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      const newState = toggleAudio();
+      if (!newState) audioToggle.classList.add('muted');
+      else audioToggle.classList.remove('muted');
+      try {
+        localStorage.setItem('chat_audio_enabled', JSON.stringify(newState));
+      } catch (_) {}
     });
+  }
 
-    // Botón + de sesiones
-    const sessionBtn = document.getElementById('sessionMenuButton');
-    if (sessionBtn) {
-        sessionBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            // Asegurar que el contenido esté cargado antes de mostrar
-            renderSessionPicker();
-            toggleSessionMenu();
-        });
+  // Cargar preferencia de audio (sin forzar toggle de lógica)
+  try {
+    const saved = localStorage.getItem('chat_audio_enabled');
+    if (saved !== null) {
+      const enabled = JSON.parse(saved);
+      chatState.audioEnabled = !!enabled;
+      if (audioToggle) {
+        if (!enabled) audioToggle.classList.add('muted');
+        else audioToggle.classList.remove('muted');
+      }
     }
+  } catch (_) {}
+
+  // Micrófono: placeholder para reconocimiento de voz
+  // Acción dual: enviar cuando hay texto; grabar voz cuando está vacío
+  actionButton.addEventListener('mousedown', ev => {
+    ev.preventDefault();
+    ev.stopPropagation();
+    // Cancelar cualquier escritura simulada pendiente del bot
+    chatState.typingToken++;
+    hideTypingIndicator();
+    setHeaderTyping(false);
+    chatState.isTyping = false;
+    if (messageInput.value.trim().length === 0) {
+      document.getElementById('inputContainer')?.classList.add('recording');
+      startVoiceInputUI();
+    }
+  });
+
+  actionButton.addEventListener('mouseup', () => {
+    // Si está grabando, detener
+    if (mediaRecorder && mediaRecorder.state === 'recording') {
+      mediaRecorder.stop();
+    }
+  });
+
+  actionButton.addEventListener('click', ev => {
+    // Con texto: enviar (click estándar)
+    if (messageInput.value.trim().length > 0) {
+      ev.preventDefault();
+      sendMessage();
+    }
+  });
+
+  // Conectar botones del panel izquierdo (tool-list)
+  try {
+    document.querySelectorAll('.tool-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const action = btn.getAttribute('data-action');
+        switch (action) {
+          case 'open-notes':
+            EventBus.emit('ui:openNotes');
+            break;
+          case 'open-glossary':
+            EventBus.emit('ui:openGlossary');
+            break;
+          case 'open-audio':
+            EventBus.emit('ui:openAudio');
+            break;
+          case 'open-video':
+            EventBus.emit('ui:openVideo');
+            break;
+          case 'open-report':
+            EventBus.emit('ui:openReport');
+            break;
+          case 'copy-prompts':
+            EventBus.emit('ui:copyPrompts');
+            break;
+          case 'open-quizzes':
+            EventBus.emit('ui:openQuizzes');
+            break;
+          case 'open-faq':
+            EventBus.emit('ui:openFAQ');
+            break;
+          case 'open-zoom':
+            EventBus.emit('ui:openZoom');
+            break;
+          case 'open-teachers':
+            EventBus.emit('ui:openTeachers');
+            break;
+        }
+      });
+    });
+    // Toggles de colapso
+    const root = document.body;
+    document.getElementById('collapseLeft')?.addEventListener('click', () => {
+      root.classList.toggle('left-collapsed');
+    });
+    document.getElementById('collapseRight')?.addEventListener('click', () => {
+      root.classList.toggle('right-collapsed');
+    });
+    // Acciones del rail (si visible)
+    const railButtons = document.querySelectorAll('.studio-rail .rail-btn');
+    if (railButtons && railButtons.length) {
+      railButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const action = btn.getAttribute('data-action');
+          switch (action) {
+            case 'open-audio':
+              EventBus.emit('ui:openAudio');
+              break;
+            case 'open-video':
+              EventBus.emit('ui:openVideo');
+              break;
+            case 'open-report':
+              EventBus.emit('ui:openReport');
+              break;
+            case 'open-notes':
+              EventBus.emit('ui:openNotes');
+              break;
+            case 'open-zoom':
+              EventBus.emit('ui:openZoom');
+              break;
+            case 'open-teachers':
+              EventBus.emit('ui:openTeachers');
+              break;
+          }
+        });
+      });
+    }
+    // Asegurar eventos para tiles del panel derecho (aún cuando colapsa/expande)
+    document.querySelectorAll('.studio-tiles .tile').forEach(tile => {
+      tile.addEventListener('click', () => {
+        const action = tile.getAttribute('data-action');
+        switch (action) {
+          case 'open-audio':
+            EventBus.emit('ui:openAudio');
+            break;
+          case 'open-video':
+            EventBus.emit('ui:openVideo');
+            break;
+          case 'open-report':
+            EventBus.emit('ui:openReport');
+            break;
+          case 'open-notes':
+            EventBus.emit('ui:openNotes');
+            break;
+          case 'open-zoom':
+            EventBus.emit('ui:openZoom');
+            break;
+          case 'open-teachers':
+            EventBus.emit('ui:openTeachers');
+            break;
+        }
+      });
+    });
+  } catch (_) {}
+
+  // Forzar primer estado
+  if (messageInput.value.trim().length > 0) {
+    inputContainer.classList.add('input-has-text');
+  } else {
+    inputContainer.classList.remove('input-has-text');
+  }
+
+  messageInput.addEventListener('input', function () {
+    this.style.height = 'auto';
+    this.style.height = this.scrollHeight + 'px';
+  });
+
+  // Botón + de sesiones
+  const sessionBtn = document.getElementById('sessionMenuButton');
+  if (sessionBtn) {
+    sessionBtn.addEventListener('click', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      // Asegurar que el contenido esté cargado antes de mostrar
+      renderSessionPicker();
+      toggleSessionMenu();
+    });
+  }
 }
 
 // ===== Nuevo: EventBus y UI API =====
 function setupEventBusAndUI() {
-    if (window.EventBus) return;
-    const listeners = {};
-    window.EventBus = {
-        on: (evt, cb) => { (listeners[evt] ||= []).push(cb); },
-        off: (evt, cb) => { listeners[evt] = (listeners[evt]||[]).filter(f => f!==cb); },
-        emit: (evt, payload) => { (listeners[evt]||[]).forEach(f => { try { f(payload); } catch(_){} }); }
-    };
+  if (window.EventBus) return;
+  const listeners = {};
+  window.EventBus = {
+    on: (evt, cb) => {
+      (listeners[evt] ||= []).push(cb);
+    },
+    off: (evt, cb) => {
+      listeners[evt] = (listeners[evt] || []).filter(f => f !== cb);
+    },
+    emit: (evt, payload) => {
+      (listeners[evt] || []).forEach(f => {
+        try {
+          f(payload);
+        } catch (_) {}
+      });
+    },
+  };
 
-    // Studio helpers
-    const cardsEl = () => document.getElementById('studioCards');
-    const addCard = (title, contentHTML) => {
-        const el = document.createElement('div');
-        el.className = 'studio-card';
-        el.innerHTML = `<h4 style="margin:0 0 8px 0">${title}</h4>` + contentHTML;
-        cardsEl()?.prepend(el);
-        return el;
-    };
+  // Studio helpers
+  const cardsEl = () => document.getElementById('studioCards');
+  const addCard = (title, contentHTML) => {
+    const el = document.createElement('div');
+    el.className = 'studio-card';
+    el.innerHTML = `<h4 style="margin:0 0 8px 0">${title}</h4>` + contentHTML;
+    cardsEl()?.prepend(el);
+    return el;
+  };
 
-    window.UI = {
-        openNotes(initial = '') { addCard('Notas', `<textarea style="width:100%;height:160px">${initial}</textarea>`); },
-        openGlossary() { addCard('Glosario', `<div id="glossaryPanelMount">Usa las letras para explorar términos.</div>`); showGlossary(); },
-        openAudioSummary() { addCard('Resumen de audio', '<div>Sube audio desde el botón de micrófono y lo resumiré aquí.</div>'); },
-        openZoomSessions() { 
-            addCard('Sesiones Zoom', `
+  window.UI = {
+    openNotes(initial = '') {
+      addCard(
+        'Notas',
+        `<textarea style="width:100%;height:160px">${initial}</textarea>`
+      );
+    },
+    openGlossary() {
+      addCard(
+        'Glosario',
+        `<div id="glossaryPanelMount">Usa las letras para explorar términos.</div>`
+      );
+      showGlossary();
+    },
+    openAudioSummary() {
+      addCard(
+        'Resumen de audio',
+        '<div>Sube audio desde el botón de micrófono y lo resumiré aquí.</div>'
+      );
+    },
+    openZoomSessions() {
+      addCard(
+        'Sesiones Zoom',
+        `
                 <div style="display:grid;gap:12px">
                     <div style="background:rgba(68,229,255,.1);padding:12px;border-radius:8px">
                         <h5 style="margin:0 0 8px">📅 Próximas sesiones</h5>
@@ -474,10 +649,13 @@ function setupEventBusAndUI() {
                         <button class="keyboard-button" style="padding:6px 12px;font-size:14px">Agregar enlace</button>
                     </div>
                 </div>
-            `); 
-        },
-        openTeachers() { 
-            addCard('Docentes del curso', `
+            `
+      );
+    },
+    openTeachers() {
+      addCard(
+        'Docentes del curso',
+        `
                 <div class="teacher-profile">
                     <div class="teacher-photo" style="background-image:url('assets/images/Ernesto.jpg')"></div>
                     <div class="teacher-head">
@@ -623,44 +801,58 @@ function setupEventBusAndUI() {
                         <li>Promotora del trabajo colaborativo y la innovación multidisciplinaria.</li>
                     </ul>
                 </div>
-            `); 
-        },
-        openVideoSummary() {
-            // Reutilizar una única tarjeta de resumen
-            let card = document.querySelector('.studio-card[data-kind="video-summary"]');
-            if (!card) {
-                card = addCard('Resumen de video', `
+            `
+      );
+    },
+    openVideoSummary() {
+      // Reutilizar una única tarjeta de resumen
+      let card = document.querySelector(
+        '.studio-card[data-kind="video-summary"]'
+      );
+      if (!card) {
+        card = addCard(
+          'Resumen de video',
+          `
                     <div id="videoSummary" style="color:var(--text-muted)">
                         ${currentVideo ? 'Generando resumen con IA…' : 'Selecciona un video en el panel izquierdo para habilitar el resumen.'}
                     </div>
                     <div style="display:flex;gap:8px;margin-top:8px">
                         <button id="refreshVideoSummary" class="keyboard-button" style="max-width:160px">Actualizar</button>
                     </div>
-                `);
-                card.setAttribute('data-kind', 'video-summary');
-            } else {
-                const header = card.querySelector('h4');
-                if (header) header.textContent = currentVideo ? `Resumen de video — ${currentVideo.label}` : 'Resumen de video';
-                const body = card.querySelector('#videoSummary');
-                if (body) body.textContent = currentVideo ? 'Generando resumen con IA…' : 'Selecciona un video en el panel izquierdo para habilitar el resumen.';
-            }
-            // Si hay video seleccionado, pedir resumen a la IA
-            setTimeout(async () => {
-                const el = card.querySelector('#videoSummary');
-                const btn = card.querySelector('#refreshVideoSummary');
-                const runSummary = async () => {
-                    if (!currentVideo || !el) return;
-                    el.textContent = 'Generando resumen con IA…';
-                    const prompt = `Resume el video actual de YouTube en español con 5 viñetas, tono claro y aplicable. Incluye propósito, puntos clave y una acción práctica.\n\nVideo: ${currentVideo.label} (${currentVideo.url})`;
-                    const response = await processUserMessageWithAI(prompt);
-                    el.textContent = response || 'No fue posible generar el resumen.';
-                };
-                if (btn) btn.addEventListener('click', runSummary);
-                if (currentVideo) await runSummary();
-            }, 0);
-        },
-        openReport(opts={}) { 
-            addCard('Informes y Resúmenes', `
+                `
+        );
+        card.setAttribute('data-kind', 'video-summary');
+      } else {
+        const header = card.querySelector('h4');
+        if (header)
+          header.textContent = currentVideo
+            ? `Resumen de video — ${currentVideo.label}`
+            : 'Resumen de video';
+        const body = card.querySelector('#videoSummary');
+        if (body)
+          body.textContent = currentVideo
+            ? 'Generando resumen con IA…'
+            : 'Selecciona un video en el panel izquierdo para habilitar el resumen.';
+      }
+      // Si hay video seleccionado, pedir resumen a la IA
+      setTimeout(async () => {
+        const el = card.querySelector('#videoSummary');
+        const btn = card.querySelector('#refreshVideoSummary');
+        const runSummary = async () => {
+          if (!currentVideo || !el) return;
+          el.textContent = 'Generando resumen con IA…';
+          const prompt = `Resume el video actual de YouTube en español con 5 viñetas, tono claro y aplicable. Incluye propósito, puntos clave y una acción práctica.\n\nVideo: ${currentVideo.label} (${currentVideo.url})`;
+          const response = await processUserMessageWithAI(prompt);
+          el.textContent = response || 'No fue posible generar el resumen.';
+        };
+        if (btn) btn.addEventListener('click', runSummary);
+        if (currentVideo) await runSummary();
+      }, 0);
+    },
+    openReport(opts = {}) {
+      addCard(
+        'Informes y Resúmenes',
+        `
                 <div style="display:grid;gap:16px">
                     <div style="display:flex;flex-direction:column;gap:8px">
                         <h5 style="margin:0">📝 Generar informe con IA</h5>
@@ -684,47 +876,60 @@ function setupEventBusAndUI() {
                         <button class="keyboard-button" style="padding:10px;font-size:14px">📝 Generar Markdown</button>
                     </div>
                 </div>
-            `); 
-        },
-        copyPrompts() { copyPrompts('fundamentos', 1); },
-        openFAQ() { addCard('FAQ', '<div>Preguntas frecuentes disponibles por sesión.</div>'); },
-        openQuizzes() { addCard('Cuestionarios', '<div>Selecciona una sesión y responde.</div>'); }
-    };
+            `
+      );
+    },
+    copyPrompts() {
+      copyPrompts('fundamentos', 1);
+    },
+    openFAQ() {
+      addCard('FAQ', '<div>Preguntas frecuentes disponibles por sesión.</div>');
+    },
+    openQuizzes() {
+      addCard('Cuestionarios', '<div>Selecciona una sesión y responde.</div>');
+    },
+  };
 
-    // Wiring: eventos -> UI
-    EventBus.on('ui:openNotes', () => UI.openNotes());
-    EventBus.on('ui:openGlossary', () => UI.openGlossary());
-    EventBus.on('ui:openAudio', () => UI.openAudioSummary());
-    EventBus.on('ui:openVideo', () => UI.openVideoSummary());
-    EventBus.on('ui:openReport', () => UI.openReport());
-    EventBus.on('ui:copyPrompts', () => UI.copyPrompts());
-    EventBus.on('ui:openFAQ', () => UI.openFAQ());
-    EventBus.on('ui:openQuizzes', () => UI.openQuizzes());
-    EventBus.on('ui:openZoom', () => UI.openZoomSessions());
-    EventBus.on('ui:openTeachers', () => UI.openTeachers());
+  // Wiring: eventos -> UI
+  EventBus.on('ui:openNotes', () => UI.openNotes());
+  EventBus.on('ui:openGlossary', () => UI.openGlossary());
+  EventBus.on('ui:openAudio', () => UI.openAudioSummary());
+  EventBus.on('ui:openVideo', () => UI.openVideoSummary());
+  EventBus.on('ui:openReport', () => UI.openReport());
+  EventBus.on('ui:copyPrompts', () => UI.copyPrompts());
+  EventBus.on('ui:openFAQ', () => UI.openFAQ());
+  EventBus.on('ui:openQuizzes', () => UI.openQuizzes());
+  EventBus.on('ui:openZoom', () => UI.openZoomSessions());
+  EventBus.on('ui:openTeachers', () => UI.openTeachers());
 }
 
 // Reconocimiento de voz básico (si disponible)
 function startVoiceInput() {
-    try {
-        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const rec = new SR();
-        rec.lang = 'es-ES';
-        rec.interimResults = false;
-        rec.maxAlternatives = 1;
-        rec.onresult = (e) => {
-            const text = e.results[0][0].transcript;
-            messageInput.value = text;
-            inputContainer.classList.add('input-has-text');
-            stopVoiceInputUI();
-            document.getElementById('inputContainer')?.classList.remove('recording');
-        };
-        rec.onerror = () => { stopVoiceInputUI(); document.getElementById('inputContainer')?.classList.remove('recording'); };
-        rec.onend = () => { stopVoiceInputUI(); document.getElementById('inputContainer')?.classList.remove('recording'); };
-        rec.start();
-    } catch (err) {
-        console.warn('Reconocimiento de voz no disponible:', err);
-    }
+  try {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const rec = new SR();
+    rec.lang = 'es-ES';
+    rec.interimResults = false;
+    rec.maxAlternatives = 1;
+    rec.onresult = e => {
+      const text = e.results[0][0].transcript;
+      messageInput.value = text;
+      inputContainer.classList.add('input-has-text');
+      stopVoiceInputUI();
+      document.getElementById('inputContainer')?.classList.remove('recording');
+    };
+    rec.onerror = () => {
+      stopVoiceInputUI();
+      document.getElementById('inputContainer')?.classList.remove('recording');
+    };
+    rec.onend = () => {
+      stopVoiceInputUI();
+      document.getElementById('inputContainer')?.classList.remove('recording');
+    };
+    rec.start();
+  } catch (err) {
+    console.warn('Reconocimiento de voz no disponible:', err);
+  }
 }
 
 // UI de grabación estilo WhatsApp (simple barra/estado)
@@ -734,160 +939,192 @@ let recordedChunks = [];
 let recProgressTimer = null;
 let recSeconds = 0;
 function startVoiceInputUI() {
-    // Crear overlay visual si no existe
-    if (!recordingOverlayEl) {
-        recordingOverlayEl = document.createElement('div');
-        recordingOverlayEl.className = 'recording-overlay';
-        recordingOverlayEl.innerHTML = `
+  // Crear overlay visual si no existe
+  if (!recordingOverlayEl) {
+    recordingOverlayEl = document.createElement('div');
+    recordingOverlayEl.className = 'recording-overlay';
+    recordingOverlayEl.innerHTML = `
             <div class="recording-bar">
                 <div class="recording-pulse"></div>
                 <div class="recording-text">Grabando… Mantén presionado para hablar</div>
                 <div class="recording-timer" id="recordingTimer">0:00</div>
             </div>
         `;
-        document.body.appendChild(recordingOverlayEl);
-    }
-    recordingOverlayEl.classList.add('show');
+    document.body.appendChild(recordingOverlayEl);
+  }
+  recordingOverlayEl.classList.add('show');
 
-    // Iniciar grabación con MediaRecorder (push-to-talk)
-    startRecording();
+  // Iniciar grabación con MediaRecorder (push-to-talk)
+  startRecording();
 
-    // Timer simple
-    const timerEl = document.getElementById('recordingTimer');
-    recSeconds = 0;
-    recordingOverlayEl.dataset.timer = setInterval(() => {
-        recSeconds += 1;
-        const m = Math.floor(recSeconds / 60);
-        const s = (recSeconds % 60).toString().padStart(2, '0');
-        if (timerEl) timerEl.textContent = `${m}:${s}`;
-    }, 1000);
+  // Timer simple
+  const timerEl = document.getElementById('recordingTimer');
+  recSeconds = 0;
+  recordingOverlayEl.dataset.timer = setInterval(() => {
+    recSeconds += 1;
+    const m = Math.floor(recSeconds / 60);
+    const s = (recSeconds % 60).toString().padStart(2, '0');
+    if (timerEl) timerEl.textContent = `${m}:${s}`;
+  }, 1000);
 
-    // Progreso visual en el anillo del botón
-    const container = document.getElementById('inputContainer');
-    const setProgress = () => {
-        const max = 60; // 60s máx por defecto
-        const progress = Math.min(recSeconds / max, 1);
-        container?.style.setProperty('--rec-progress', `${progress * 100}%`);
-        container?.style.setProperty('--rec-visible', `1`);
-    };
-    recProgressTimer = setInterval(setProgress, 200);
+  // Progreso visual en el anillo del botón
+  const container = document.getElementById('inputContainer');
+  const setProgress = () => {
+    const max = 60; // 60s máx por defecto
+    const progress = Math.min(recSeconds / max, 1);
+    container?.style.setProperty('--rec-progress', `${progress * 100}%`);
+    container?.style.setProperty('--rec-visible', `1`);
+  };
+  recProgressTimer = setInterval(setProgress, 200);
 }
 
 function stopVoiceInputUI() {
-    if (!recordingOverlayEl) return;
-    recordingOverlayEl.classList.remove('show');
-    const t = recordingOverlayEl.dataset.timer;
-    if (t) { clearInterval(t); delete recordingOverlayEl.dataset.timer; }
-    if (recProgressTimer) { clearInterval(recProgressTimer); recProgressTimer = null; }
-    const container = document.getElementById('inputContainer');
-    container?.style.removeProperty('--rec-visible');
-    container?.style.removeProperty('--rec-progress');
+  if (!recordingOverlayEl) return;
+  recordingOverlayEl.classList.remove('show');
+  const t = recordingOverlayEl.dataset.timer;
+  if (t) {
+    clearInterval(t);
+    delete recordingOverlayEl.dataset.timer;
+  }
+  if (recProgressTimer) {
+    clearInterval(recProgressTimer);
+    recProgressTimer = null;
+  }
+  const container = document.getElementById('inputContainer');
+  container?.style.removeProperty('--rec-visible');
+  container?.style.removeProperty('--rec-progress');
 }
 
 // Iniciar grabación con MediaRecorder
 async function startRecording() {
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        recordedChunks = [];
-        mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
-        mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) recordedChunks.push(e.data); };
-        mediaRecorder.onstop = async () => {
-            try {
-                const blob = new Blob(recordedChunks, { type: 'audio/webm' });
-                await uploadAudio(blob);
-            } finally {
-                stopVoiceInputUI();
-                document.getElementById('inputContainer')?.classList.remove('recording');
-                stream.getTracks().forEach(t => t.stop());
-            }
-        };
-        mediaRecorder.start();
-        // Auto-stop a los 60s
-        setTimeout(() => { if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop(); }, 60000);
-    } catch (err) {
-        console.warn('No se pudo iniciar grabación:', err);
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    recordedChunks = [];
+    mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+    mediaRecorder.ondataavailable = e => {
+      if (e.data.size > 0) recordedChunks.push(e.data);
+    };
+    mediaRecorder.onstop = async () => {
+      try {
+        const blob = new Blob(recordedChunks, { type: 'audio/webm' });
+        await uploadAudio(blob);
+      } finally {
         stopVoiceInputUI();
-        document.getElementById('inputContainer')?.classList.remove('recording');
-    }
+        document
+          .getElementById('inputContainer')
+          ?.classList.remove('recording');
+        stream.getTracks().forEach(t => t.stop());
+      }
+    };
+    mediaRecorder.start();
+    // Auto-stop a los 60s
+    setTimeout(() => {
+      if (mediaRecorder && mediaRecorder.state === 'recording')
+        mediaRecorder.stop();
+    }, 60000);
+  } catch (err) {
+    console.warn('No se pudo iniciar grabación:', err);
+    stopVoiceInputUI();
+    document.getElementById('inputContainer')?.classList.remove('recording');
+  }
 }
 
 // Subir audio al backend
 async function uploadAudio(blob) {
-    try {
-        const form = new FormData();
-        form.append('audio', blob, 'voz.webm');
-        const res = await fetch('/api/transcribe', {
-            method: 'POST',
-            headers: { 'X-API-Key': getApiKey(), ...getUserAuthHeaders(), 'X-Requested-With': 'XMLHttpRequest' },
-            body: form
-        });
-        if (!res.ok) throw new Error('No se pudo transcribir el audio');
-        const data = await res.json();
-        const text = data.text || '(Transcripción en proceso)';
-        // Mostrar como tarjeta en el panel derecho
-        const card = document.createElement('div');
-        card.className = 'studio-card';
-        card.innerHTML = `<h4 style="margin:0 0 8px 0">Transcripción (AssemblyAI)</h4><div style="white-space:pre-wrap">${text}</div>`;
-        document.getElementById('studioCards')?.prepend(card);
-        // También enviar al chat como mensaje del usuario para poder continuar el flujo
-        if (text && text !== '(Transcripción en proceso)') {
-            addUserMessage(text);
-        }
-    } catch (e) {
-        console.warn('Error subiendo audio:', e);
+  try {
+    const form = new FormData();
+    form.append('audio', blob, 'voz.webm');
+    const res = await fetch('/api/transcribe', {
+      method: 'POST',
+      headers: {
+        'X-API-Key': getApiKey(),
+        ...getUserAuthHeaders(),
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+      body: form,
+    });
+    if (!res.ok) throw new Error('No se pudo transcribir el audio');
+    const data = await res.json();
+    const text = data.text || '(Transcripción en proceso)';
+    // Mostrar como tarjeta en el panel derecho
+    const card = document.createElement('div');
+    card.className = 'studio-card';
+    card.innerHTML = `<h4 style="margin:0 0 8px 0">Transcripción (AssemblyAI)</h4><div style="white-space:pre-wrap">${text}</div>`;
+    document.getElementById('studioCards')?.prepend(card);
+    // También enviar al chat como mensaje del usuario para poder continuar el flujo
+    if (text && text !== '(Transcripción en proceso)') {
+      addUserMessage(text);
     }
+  } catch (e) {
+    console.warn('Error subiendo audio:', e);
+  }
 }
 
 // Utilidades de mensajería con escritura simulada
 function sanitizeBotText(text) {
-    return String(text || '').replace(/\*\*/g, '');
+  return String(text || '').replace(/\*\*/g, '');
 }
 
 function setHeaderTyping(isTyping) {
-    try {
-        const statusEl = document.querySelector('.chat-info p');
-        if (statusEl) statusEl.textContent = isTyping ? 'Escribiendo...' : 'En línea';
-    } catch (_) {}
+  try {
+    const statusEl = document.querySelector('.chat-info p');
+    if (statusEl)
+      statusEl.textContent = isTyping ? 'Escribiendo...' : 'En línea';
+  } catch (_) {}
 }
 
 function computeTypingDelay(text) {
-    const length = (text || '').length;
-    if (length <= 60) return 3000;         // Corto: 3s
-    if (length <= 220) return 4500;       // Mediano: 4.5s
-    return 7000;                           // Largo: 7s
+  const length = (text || '').length;
+  if (length <= 60) return 3000; // Corto: 3s
+  if (length <= 220) return 4500; // Mediano: 4.5s
+  return 7000; // Largo: 7s
 }
 
-async function sendBotMessage(text, keyboard = null, needsUserInput = false, playAudio = false) {
-    const clean = sanitizeBotText(text);
-    // Generar token de escritura y respetarlo para poder cancelar
-    const myToken = ++chatState.typingToken;
-    showTypingIndicator();
-    setHeaderTyping(true);
-    const delay = computeTypingDelay(clean);
-    await new Promise(r => setTimeout(r, delay));
-    // Si otro evento (p.ej., clic en enviar) canceló esta escritura, abortar
-    if (myToken !== chatState.typingToken) {
-        hideTypingIndicator();
-        setHeaderTyping(false);
-        return;
-    }
+async function sendBotMessage(
+  text,
+  keyboard = null,
+  needsUserInput = false,
+  playAudio = false
+) {
+  const clean = sanitizeBotText(text);
+  // Generar token de escritura y respetarlo para poder cancelar
+  const myToken = ++chatState.typingToken;
+  showTypingIndicator();
+  setHeaderTyping(true);
+  const delay = computeTypingDelay(clean);
+  await new Promise(r => setTimeout(r, delay));
+  // Si otro evento (p.ej., clic en enviar) canceló esta escritura, abortar
+  if (myToken !== chatState.typingToken) {
     hideTypingIndicator();
     setHeaderTyping(false);
-    // Si el último mensaje es del bot y estamos mostrando opciones, edítalo
-    if (keyboard && chatMessages.querySelectorAll('.message.bot-message:not(.typing-indicator)').length > 0) {
-        replaceLastBotMessage(clean, keyboard);
-    } else {
-        addBotMessage(clean, keyboard, needsUserInput, playAudio);
-    }
+    return;
+  }
+  hideTypingIndicator();
+  setHeaderTyping(false);
+  // Si el último mensaje es del bot y estamos mostrando opciones, edítalo
+  if (
+    keyboard &&
+    chatMessages.querySelectorAll('.message.bot-message:not(.typing-indicator)')
+      .length > 0
+  ) {
+    replaceLastBotMessage(clean, keyboard);
+  } else {
+    addBotMessage(clean, keyboard, needsUserInput, playAudio);
+  }
 }
 
 // Agregar mensaje del bot
-function addBotMessage(text, keyboard = null, needsUserInput = false, playAudio = false) {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = 'message bot-message';
+function addBotMessage(
+  text,
+  keyboard = null,
+  needsUserInput = false,
+  playAudio = false
+) {
+  const messageDiv = document.createElement('div');
+  messageDiv.className = 'message bot-message';
 
-    const avatarHTML = getBotAvatarHTML();
-    let messageContent = `
+  const avatarHTML = getBotAvatarHTML();
+  let messageContent = `
         ${avatarHTML}
         <div class="message-bubble">
             ${String(text).replace(/\*\*/g, '')}
@@ -895,100 +1132,103 @@ function addBotMessage(text, keyboard = null, needsUserInput = false, playAudio 
         </div>
     `;
 
-    messageDiv.innerHTML = messageContent;
-    chatMessages.appendChild(messageDiv);
-    
-    // Reproducir audio solo si está habilitado y se solicita específicamente
-    if (playAudio && chatState.audioEnabled) {
-        playBotResponseAudio(text);
-    }
-    
-    scrollToBottom();
-    
-    // Agregar al historial
-    chatState.conversationHistory.push({
-        type: 'bot',
-        content: text,
-        timestamp: new Date()
-    });
+  messageDiv.innerHTML = messageContent;
+  chatMessages.appendChild(messageDiv);
 
-    // Evitar mostrar automáticamente el menú principal aquí.
-    // El menú se mostrará explícitamente al final del flujo de bienvenida
-    // o después de capturar el nombre del usuario.
+  // Reproducir audio solo si está habilitado y se solicita específicamente
+  if (playAudio && chatState.audioEnabled) {
+    playBotResponseAudio(text);
+  }
+
+  scrollToBottom();
+
+  // Agregar al historial
+  chatState.conversationHistory.push({
+    type: 'bot',
+    content: text,
+    timestamp: new Date(),
+  });
+
+  // Evitar mostrar automáticamente el menú principal aquí.
+  // El menú se mostrará explícitamente al final del flujo de bienvenida
+  // o después de capturar el nombre del usuario.
 }
 
 // Reemplazar el último mensaje del bot para no saturar el chat
 function replaceLastBotMessage(text, keyboard = null) {
-    // Mantener glosario abierto si está visible
-    const hasGlossary = document.getElementById('glossaryOverlay')?.classList.contains('open');
-    const botMessages = Array.from(chatMessages.querySelectorAll('.message.bot-message'))
-        .filter(el => !el.classList.contains('typing-indicator'));
-    const last = botMessages[botMessages.length - 1];
-    if (!last) {
-        addBotMessage(text, keyboard, false, false);
-        return;
-    }
-    const avatarHTML = getBotAvatarHTML();
-    last.innerHTML = `
+  // Mantener glosario abierto si está visible
+  const hasGlossary = document
+    .getElementById('glossaryOverlay')
+    ?.classList.contains('open');
+  const botMessages = Array.from(
+    chatMessages.querySelectorAll('.message.bot-message')
+  ).filter(el => !el.classList.contains('typing-indicator'));
+  const last = botMessages[botMessages.length - 1];
+  if (!last) {
+    addBotMessage(text, keyboard, false, false);
+    return;
+  }
+  const avatarHTML = getBotAvatarHTML();
+  last.innerHTML = `
         ${avatarHTML}
         <div class="message-bubble">
             ${String(text).replace(/\*\*/g, '')}
             ${keyboard ? keyboard : ''}
         </div>
     `;
-    scrollToBottom();
-    // Actualizar último registro en historial
-    for (let i = chatState.conversationHistory.length - 1; i >= 0; i--) {
-        if (chatState.conversationHistory[i].type === 'bot') {
-            chatState.conversationHistory[i].content = text;
-            break;
-        }
+  scrollToBottom();
+  // Actualizar último registro en historial
+  for (let i = chatState.conversationHistory.length - 1; i >= 0; i--) {
+    if (chatState.conversationHistory[i].type === 'bot') {
+      chatState.conversationHistory[i].content = text;
+      break;
     }
+  }
 }
 
 // Agregar mensaje del usuario
 function addUserMessage(text) {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = 'message user-message';
-    const avatarHTML = getUserAvatarHTML();
-    messageDiv.innerHTML = `
+  const messageDiv = document.createElement('div');
+  messageDiv.className = 'message user-message';
+  const avatarHTML = getUserAvatarHTML();
+  messageDiv.innerHTML = `
         <div class="message-bubble">${text}</div>
         ${avatarHTML}
     `;
-    chatMessages.appendChild(messageDiv);
-    scrollToBottom();
-    
-    // Agregar al historial
-    chatState.conversationHistory.push({
-        type: 'user',
-        content: text,
-        timestamp: new Date()
-    });
+  chatMessages.appendChild(messageDiv);
+  scrollToBottom();
+
+  // Agregar al historial
+  chatState.conversationHistory.push({
+    type: 'user',
+    content: text,
+    timestamp: new Date(),
+  });
 }
 
 // Reproducir audio para respuestas del bot (solo cuando se solicita específicamente)
 function playBotResponseAudio(text) {
-    if (!chatState.audioEnabled) return;
+  if (!chatState.audioEnabled) return;
 
-    if ('speechSynthesis' in window) {
-        try {
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'es-ES';
-            utterance.rate = 0.9;
-            utterance.pitch = 1.0;
-            utterance.volume = 0.5;
-            
-            const voices = speechSynthesis.getVoices();
-            const spanishVoice = voices.find(voice => voice.lang.includes('es'));
-            if (spanishVoice) {
-                utterance.voice = spanishVoice;
-            }
-            
-            speechSynthesis.speak(utterance);
-        } catch (error) {
-            console.warn('Error reproduciendo audio de respuesta:', error);
-        }
+  if ('speechSynthesis' in window) {
+    try {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'es-ES';
+      utterance.rate = 0.9;
+      utterance.pitch = 1.0;
+      utterance.volume = 0.5;
+
+      const voices = speechSynthesis.getVoices();
+      const spanishVoice = voices.find(voice => voice.lang.includes('es'));
+      if (spanishVoice) {
+        utterance.voice = spanishVoice;
+      }
+
+      speechSynthesis.speak(utterance);
+    } catch (error) {
+      console.warn('Error reproduciendo audio de respuesta:', error);
     }
+  }
 }
 
 // Mostrar menú principal
@@ -996,13 +1236,17 @@ function playBotResponseAudio(text) {
 
 // Mostrar instrucciones de bienvenida divididas
 async function showWelcomeInstructions() {
-    await sendBotMessage("📝 ESCRIBE EN EL CHAT\n\nHaz tus preguntas y presiona Enter. Las herramientas ahora están en los paneles laterales (Notas, Glosario, Resumen de audio/video, Informes).");
-    await sendBotMessage("🎯 SUGERENCIAS\n\nCuando corresponda, te propondré acciones como 'Enviar a Notas' o 'Crear Informe'; el panel Studio de la derecha las mostrará como tarjetas.");
+  await sendBotMessage(
+    '📝 ESCRIBE EN EL CHAT\n\nHaz tus preguntas y presiona Enter. Las herramientas ahora están en los paneles laterales (Notas, Glosario, Resumen de audio/video, Informes).'
+  );
+  await sendBotMessage(
+    "🎯 SUGERENCIAS\n\nCuando corresponda, te propondré acciones como 'Enviar a Notas' o 'Crear Informe'; el panel Studio de la derecha las mostrará como tarjetas."
+  );
 }
 
 // Mensaje guía para dirigir a sesiones del curso
 async function showSessionGuide() {
-    const guide = `
+  const guide = `
         <div class="inline-keyboard">
             <div class="keyboard-row">
                 <button class="keyboard-button" onclick="Chatbot.showSessionsForTopic('fundamentos')">🤖 Fundamentos</button>
@@ -1022,30 +1266,35 @@ async function showSessionGuide() {
             </div>
         </div>
     `;
-    await sendBotMessage("🏁 Elige un tema o entra directo por sesión (Fundamentos):", guide, false, false);
+  await sendBotMessage(
+    '🏁 Elige un tema o entra directo por sesión (Fundamentos):',
+    guide,
+    false,
+    false
+  );
 }
 
 // Mostrar temas
 function showTopics() {
-    // Saltar directamente al selector de sesiones del tema por defecto
-    showSessionsForTopic('fundamentos');
+  // Saltar directamente al selector de sesiones del tema por defecto
+  showSessionsForTopic('fundamentos');
 }
 
 // Mostrar tema específico
 function showTopic(topic) {
-    showSessionsForTopic(topic);
+  showSessionsForTopic(topic);
 }
 
 // Mostrar selector de sesiones 1..4 para un tema
 function showSessionsForTopic(topic) {
-    const topicTitles = {
-        'fundamentos': '🤖 Fundamentos de IA',
-        'ml': '📊 Machine Learning',
-        'deep': '🧠 Deep Learning',
-        'aplicaciones': '🎯 Aplicaciones Prácticas'
-    };
+  const topicTitles = {
+    fundamentos: '🤖 Fundamentos de IA',
+    ml: '📊 Machine Learning',
+    deep: '🧠 Deep Learning',
+    aplicaciones: '🎯 Aplicaciones Prácticas',
+  };
 
-    const keyboard = `
+  const keyboard = `
         <div class="inline-keyboard">
             <div class="keyboard-row">
                 <button class="keyboard-button" onclick="Chatbot.openTopicSession('${topic}', 1)">📘 Sesión 1</button>
@@ -1059,26 +1308,32 @@ function showSessionsForTopic(topic) {
         </div>
     `;
 
-    replaceLastBotMessage(`${topicTitles[topic] || '📚 Tema'}\n\nSelecciona la sesión a la que quieres ir:`, keyboard);
+  replaceLastBotMessage(
+    `${topicTitles[topic] || '📚 Tema'}\n\nSelecciona la sesión a la que quieres ir:`,
+    keyboard
+  );
 }
 
 // Acción al seleccionar una sesión
 function openTopicSession(topic, session) {
-    const titles = {
-        'fundamentos': '🤖 Fundamentos de IA',
-        'ml': '📊 Machine Learning',
-        'deep': '🧠 Deep Learning',
-        'aplicaciones': '🎯 Aplicaciones Prácticas'
-    };
-    const title = titles[topic] || '📚 Tema';
+  const titles = {
+    fundamentos: '🤖 Fundamentos de IA',
+    ml: '📊 Machine Learning',
+    deep: '🧠 Deep Learning',
+    aplicaciones: '🎯 Aplicaciones Prácticas',
+  };
+  const title = titles[topic] || '📚 Tema';
 
-    const keyboard = getSessionActionsKeyboard(topic, session);
+  const keyboard = getSessionActionsKeyboard(topic, session);
 
-    replaceLastBotMessage(`${title} — Sesión ${session}\n\nSelecciona una acción:`, keyboard);
+  replaceLastBotMessage(
+    `${title} — Sesión ${session}\n\nSelecciona una acción:`,
+    keyboard
+  );
 }
 
 function getSessionActionsKeyboard(topic, session) {
-    return `
+  return `
         <div class="inline-keyboard">
             <div class="keyboard-row">
                 <button class="keyboard-button" onclick="Chatbot.showCollaborativeActivities('${topic}', ${session})">🤝 Actividades Colaborativas</button>
@@ -1097,69 +1352,104 @@ function getSessionActionsKeyboard(topic, session) {
 }
 
 function showCollaborativeActivities(topic, session) {
-    const activities = `
+  const activities = `
 • Debate guiado: Ventajas y límites de ${topic} (Sesión ${session})
 • Parejas: Explica el concepto y comparte ejemplo real
 • Mini-proyecto: Diseña un caso de uso y métricas de éxito
-`; 
-    sendBotMessage(`🤝 ACTIVIDADES COLABORATIVAS — Sesión ${session}\n\n${activities}`, getSessionActionsKeyboard(topic, session), false, false);
+`;
+  sendBotMessage(
+    `🤝 ACTIVIDADES COLABORATIVAS — Sesión ${session}\n\n${activities}`,
+    getSessionActionsKeyboard(topic, session),
+    false,
+    false
+  );
 }
 
 function startQuiz(topic, session) {
-    const quizIntro = `📝 CUESTIONARIO — Sesión ${session}\n\nResponde brevemente (1–2 líneas).`;
-    const q = `
+  const quizIntro = `📝 CUESTIONARIO — Sesión ${session}\n\nResponde brevemente (1–2 líneas).`;
+  const q = `
 1) Define en tus palabras el objetivo principal de esta sesión.
 2) Pon un ejemplo práctico del concepto clave visto.
 3) ¿Qué métrica usarías para evaluar el éxito?
 `;
-    sendBotMessage(`${quizIntro}\n\n${q}`, getSessionActionsKeyboard(topic, session), false, false);
+  sendBotMessage(
+    `${quizIntro}\n\n${q}`,
+    getSessionActionsKeyboard(topic, session),
+    false,
+    false
+  );
 }
 
 function showFAQ(topic, session) {
-    const faq = `
+  const faq = `
 • ¿Cuándo usar ${topic}?\n• ¿Qué errores comunes debo evitar?\n• ¿Qué recursos recomiendas para profundizar?`;
-    sendBotMessage(`❓ FAQ — Sesión ${session}\n\n${faq}`, getSessionActionsKeyboard(topic, session), false, false);
+  sendBotMessage(
+    `❓ FAQ — Sesión ${session}\n\n${faq}`,
+    getSessionActionsKeyboard(topic, session),
+    false,
+    false
+  );
 }
 
 async function copyPrompts(topic, session) {
-    // Si es la primera sesión, mostrar panel lateral con instrucciones y botón copiar
-    if (session === 1) {
-        const promptText = `Actúa como un analista experto en inteligencia artificial generativa. Realiza una investigación exhaustiva con el título "Gen AI El Despertar de una Nueva Era Humana del miedo al entusiasmo" para identificar y analizar los siguientes puntos clave:\n\n- Evolución de la percepción: Describe el cambio en la percepción de la IA generativa desde su aparición masiva, incluyendo la reacción inicial y la mentalidad actual en la alta dirección.\n\n- Impacto transformador y ejemplos de uso actuales: Identifica cómo la IA generativa está redefiniendo la productividad humana y transformando modelos de negocio en diversas industrias. Proporciona ejemplos específicos de empresas y sectores que ya están utilizando la IA generativa, detallando las aplicaciones y los beneficios obtenidos.\n\n- Avances tecnológicos y ecosistema: Detalla las nuevas generaciones de modelos de IA generativa (Finales 2024-2025) y sus capacidades mejoradas. Describe el ecosistema de proveedores líderes y sus herramientas para entornos corporativos. Explica las estrategias de adopción de la IA generativa por parte de las empresas, incluyendo la elección entre modelos públicos y la construcción de IP propia.\n\n- Implicaciones humanas y sociales: Analiza cómo la IA generativa está democratizando el conocimiento, amplificando la creatividad y reimaginando el trabajo, destacando el valor humano en este nuevo escenario.\n\n- Casos de uso en finanzas y banca: Desglosa los casos de uso recientes de la IA generativa en el sector financiero y bancario, incluyendo asistentes virtuales, optimización de riesgos y cumplimiento, y personalización/eficiencia. Menciona las proyecciones de McKinsey para el futuro del trabajo en relación con la IA generativa.\n\n- Desafíos y consideraciones estratégicas para líderes: Extrae las recomendaciones clave para los CEOs y C-levels en la adopción e integración de la IA generativa, incluyendo la necesidad de ética, visión, valentía e inversión en talento.\n\nAsegúrate de citar cada dato o afirmación con el número de fuente correspondiente. Organiza tu respuesta de manera clara y concisa, utilizando un formato de investigación formal.`;
-        showPromptOverlay({
-            title: `Paso 1: Prompt de Investigación — Sesión ${session}`,
-            htmlIntro: `1. Abre <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer">Gemini</a> y, en la caja de chat, copia y pega el siguiente prompt en su totalidad.<br/>2. Activa la herramienta <strong>deep research</strong> y ejecuta.`,
-            promptText,
-        });
-        return;
-    }
+  // Si es la primera sesión, mostrar panel lateral con instrucciones y botón copiar
+  if (session === 1) {
+    const promptText = `Actúa como un analista experto en inteligencia artificial generativa. Realiza una investigación exhaustiva con el título "Gen AI El Despertar de una Nueva Era Humana del miedo al entusiasmo" para identificar y analizar los siguientes puntos clave:\n\n- Evolución de la percepción: Describe el cambio en la percepción de la IA generativa desde su aparición masiva, incluyendo la reacción inicial y la mentalidad actual en la alta dirección.\n\n- Impacto transformador y ejemplos de uso actuales: Identifica cómo la IA generativa está redefiniendo la productividad humana y transformando modelos de negocio en diversas industrias. Proporciona ejemplos específicos de empresas y sectores que ya están utilizando la IA generativa, detallando las aplicaciones y los beneficios obtenidos.\n\n- Avances tecnológicos y ecosistema: Detalla las nuevas generaciones de modelos de IA generativa (Finales 2024-2025) y sus capacidades mejoradas. Describe el ecosistema de proveedores líderes y sus herramientas para entornos corporativos. Explica las estrategias de adopción de la IA generativa por parte de las empresas, incluyendo la elección entre modelos públicos y la construcción de IP propia.\n\n- Implicaciones humanas y sociales: Analiza cómo la IA generativa está democratizando el conocimiento, amplificando la creatividad y reimaginando el trabajo, destacando el valor humano en este nuevo escenario.\n\n- Casos de uso en finanzas y banca: Desglosa los casos de uso recientes de la IA generativa en el sector financiero y bancario, incluyendo asistentes virtuales, optimización de riesgos y cumplimiento, y personalización/eficiencia. Menciona las proyecciones de McKinsey para el futuro del trabajo en relación con la IA generativa.\n\n- Desafíos y consideraciones estratégicas para líderes: Extrae las recomendaciones clave para los CEOs y C-levels en la adopción e integración de la IA generativa, incluyendo la necesidad de ética, visión, valentía e inversión en talento.\n\nAsegúrate de citar cada dato o afirmación con el número de fuente correspondiente. Organiza tu respuesta de manera clara y concisa, utilizando un formato de investigación formal.`;
+    showPromptOverlay({
+      title: `Paso 1: Prompt de Investigación — Sesión ${session}`,
+      htmlIntro: `1. Abre <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer">Gemini</a> y, en la caja de chat, copia y pega el siguiente prompt en su totalidad.<br/>2. Activa la herramienta <strong>deep research</strong> y ejecuta.`,
+      promptText,
+    });
+    return;
+  }
 
-    const prompts = [
-        `Explícame el concepto central de la sesión ${session} de ${topic} con un ejemplo simple`,
-        `Dame 3 ejercicios prácticos breves sobre la sesión ${session} de ${topic}`,
-        `Propón un mini‑proyecto aplicando lo visto en la sesión ${session} de ${topic}`
-    ].join('\n');
-    try {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            await navigator.clipboard.writeText(prompts);
-            sendBotMessage('📋 Prompts copiados al portapapeles.', getSessionActionsKeyboard(topic, session), false, false);
-        } else {
-            const ta = document.createElement('textarea');
-            ta.value = prompts; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
-            sendBotMessage('📋 Prompts copiados al portapapeles.', getSessionActionsKeyboard(topic, session), false, false);
-        }
-    } catch (e) {
-        sendBotMessage('⚠️ No se pudo copiar automáticamente. Aquí tienes los prompts:\n\n' + prompts, getSessionActionsKeyboard(topic, session), false, false);
+  const prompts = [
+    `Explícame el concepto central de la sesión ${session} de ${topic} con un ejemplo simple`,
+    `Dame 3 ejercicios prácticos breves sobre la sesión ${session} de ${topic}`,
+    `Propón un mini‑proyecto aplicando lo visto en la sesión ${session} de ${topic}`,
+  ].join('\n');
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(prompts);
+      sendBotMessage(
+        '📋 Prompts copiados al portapapeles.',
+        getSessionActionsKeyboard(topic, session),
+        false,
+        false
+      );
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = prompts;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      sendBotMessage(
+        '📋 Prompts copiados al portapapeles.',
+        getSessionActionsKeyboard(topic, session),
+        false,
+        false
+      );
     }
+  } catch (e) {
+    sendBotMessage(
+      '⚠️ No se pudo copiar automáticamente. Aquí tienes los prompts:\n\n' +
+        prompts,
+      getSessionActionsKeyboard(topic, session),
+      false,
+      false
+    );
+  }
 }
 
 // Panel lateral para prompts (similar al glosario)
 function showPromptOverlay({ title, htmlIntro, promptText }) {
-    let overlay = document.getElementById('promptOverlay');
-    if (!overlay) {
-        overlay = document.createElement('div');
-        overlay.id = 'promptOverlay';
-        overlay.className = 'prompt-overlay';
-        overlay.innerHTML = `
+  let overlay = document.getElementById('promptOverlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'promptOverlay';
+    overlay.className = 'prompt-overlay';
+    overlay.innerHTML = `
             <div class="prompt-panel">
                 <div class="prompt-header">
                     <h3>📑 <span id="promptTitle"></span></h3>
@@ -1174,62 +1464,71 @@ function showPromptOverlay({ title, htmlIntro, promptText }) {
                 </div>
             </div>
         `;
-        document.body.appendChild(overlay);
-        overlay.querySelector('.prompt-close').addEventListener('click', () => hidePromptOverlay());
-        overlay.querySelector('#copyPromptBtn').addEventListener('click', async () => {
-            const text = overlay.querySelector('#promptText').textContent;
-            try {
-                await navigator.clipboard.writeText(text);
-                overlay.querySelector('#copyPromptBtn').textContent = '✅ Copiado';
-                setTimeout(() => overlay.querySelector('#copyPromptBtn').textContent = '📋 Copiar Prompt', 1200);
-            } catch (_) {}
-        });
-    }
-    overlay.querySelector('#promptTitle').textContent = title || 'Prompt';
-    overlay.querySelector('#promptIntro').innerHTML = htmlIntro || '';
-    overlay.querySelector('#promptText').textContent = promptText || '';
+    document.body.appendChild(overlay);
+    overlay
+      .querySelector('.prompt-close')
+      .addEventListener('click', () => hidePromptOverlay());
+    overlay
+      .querySelector('#copyPromptBtn')
+      .addEventListener('click', async () => {
+        const text = overlay.querySelector('#promptText').textContent;
+        try {
+          await navigator.clipboard.writeText(text);
+          overlay.querySelector('#copyPromptBtn').textContent = '✅ Copiado';
+          setTimeout(
+            () =>
+              (overlay.querySelector('#copyPromptBtn').textContent =
+                '📋 Copiar Prompt'),
+            1200
+          );
+        } catch (_) {}
+      });
+  }
+  overlay.querySelector('#promptTitle').textContent = title || 'Prompt';
+  overlay.querySelector('#promptIntro').innerHTML = htmlIntro || '';
+  overlay.querySelector('#promptText').textContent = promptText || '';
 
-    const container = document.querySelector('.telegram-container');
-    const glossary = document.getElementById('glossaryOverlay');
-    const panel = overlay.querySelector('.prompt-panel');
-    if (glossary && glossary.classList.contains('open')) {
-        // si el prompt estaba a la derecha, animarlo hacia la izquierda suavemente
-        panel.classList.add('left');
-        if (container) {
-            container.classList.remove('shift-left');
-            container.style.transform = 'translateX(0) scale(0.975)';
-        }
-    } else {
-        panel.classList.remove('left');
-        if (container) {
-            container.classList.add('shift-left');
-            container.style.removeProperty('transform');
-        }
+  const container = document.querySelector('.telegram-container');
+  const glossary = document.getElementById('glossaryOverlay');
+  const panel = overlay.querySelector('.prompt-panel');
+  if (glossary && glossary.classList.contains('open')) {
+    // si el prompt estaba a la derecha, animarlo hacia la izquierda suavemente
+    panel.classList.add('left');
+    if (container) {
+      container.classList.remove('shift-left');
+      container.style.transform = 'translateX(0) scale(0.975)';
     }
-    setTimeout(() => overlay.classList.add('open'), 80);
+  } else {
+    panel.classList.remove('left');
+    if (container) {
+      container.classList.add('shift-left');
+      container.style.removeProperty('transform');
+    }
+  }
+  setTimeout(() => overlay.classList.add('open'), 80);
 }
 
 function hidePromptOverlay() {
-    const overlay = document.getElementById('promptOverlay');
-    const container = document.querySelector('.telegram-container');
-    if (overlay) overlay.classList.remove('open');
-    setTimeout(() => {
-        const glossary = document.getElementById('glossaryOverlay');
-        if (glossary && glossary.classList.contains('open')) {
-            if (container) {
-                container.classList.add('shift-left');
-                container.style.removeProperty('transform');
-            }
-        } else {
-            container?.classList.remove('shift-left');
-            container?.style.removeProperty('transform');
-        }
-    }, 150);
+  const overlay = document.getElementById('promptOverlay');
+  const container = document.querySelector('.telegram-container');
+  if (overlay) overlay.classList.remove('open');
+  setTimeout(() => {
+    const glossary = document.getElementById('glossaryOverlay');
+    if (glossary && glossary.classList.contains('open')) {
+      if (container) {
+        container.classList.add('shift-left');
+        container.style.removeProperty('transform');
+      }
+    } else {
+      container?.classList.remove('shift-left');
+      container?.style.removeProperty('transform');
+    }
+  }, 150);
 }
 
 // Mostrar ejercicios
 function showExercises() {
-    const keyboard = `
+  const keyboard = `
         <div class="inline-keyboard">
             <div class="keyboard-row">
                 <button class="keyboard-button" onclick="showExerciseLevel('basicos')">🔰 Ejercicios Básicos</button>
@@ -1246,70 +1545,114 @@ function showExercises() {
             ${getBackButton()}
         </div>
     `;
-    
-    sendBotMessage("🧠 EJERCICIOS DISPONIBLES\n\nSelecciona el nivel de dificultad:", keyboard, false, false);
+
+  sendBotMessage(
+    '🧠 EJERCICIOS DISPONIBLES\n\nSelecciona el nivel de dificultad:',
+    keyboard,
+    false,
+    false
+  );
 }
 
 // Mostrar nivel de ejercicios
 function showExerciseLevel(level) {
-    const exercises = {
-        'basicos': {
-            title: '🔰 Ejercicios Básicos',
-            content: '• Implementar un algoritmo de clasificación simple\n• Crear un modelo de regresión lineal\n• Análisis exploratorio de datos\n• Visualización de datos básica'
-        },
-        'intermedios': {
-            title: '⚡ Ejercicios Intermedios',
-            content: '• Construir una red neuronal básica\n• Implementar un sistema de recomendación\n• Procesamiento de texto con NLP\n• Optimización de hiperparámetros'
-        },
-        'proyectos': {
-            title: '🚀 Proyectos Prácticos',
-            content: '• Clasificador de imágenes\n• Sistema de análisis de sentimientos\n• Chatbot simple\n• Sistema de recomendación completo'
-        },
-        'desafios': {
-            title: '🏆 Desafíos Avanzados',
-            content: '• Optimización de hiperparámetros\n• Implementación de algoritmos complejos\n• Análisis de datos en tiempo real\n• Modelos de ensemble'
-        }
-    };
-    
-    const selectedExercise = exercises[level];
-    sendBotMessage(`${selectedExercise.title}\n\n${selectedExercise.content}`, getBackButton(), false, false);
+  const exercises = {
+    basicos: {
+      title: '🔰 Ejercicios Básicos',
+      content:
+        '• Implementar un algoritmo de clasificación simple\n• Crear un modelo de regresión lineal\n• Análisis exploratorio de datos\n• Visualización de datos básica',
+    },
+    intermedios: {
+      title: '⚡ Ejercicios Intermedios',
+      content:
+        '• Construir una red neuronal básica\n• Implementar un sistema de recomendación\n• Procesamiento de texto con NLP\n• Optimización de hiperparámetros',
+    },
+    proyectos: {
+      title: '🚀 Proyectos Prácticos',
+      content:
+        '• Clasificador de imágenes\n• Sistema de análisis de sentimientos\n• Chatbot simple\n• Sistema de recomendación completo',
+    },
+    desafios: {
+      title: '🏆 Desafíos Avanzados',
+      content:
+        '• Optimización de hiperparámetros\n• Implementación de algoritmos complejos\n• Análisis de datos en tiempo real\n• Modelos de ensemble',
+    },
+  };
+
+  const selectedExercise = exercises[level];
+  sendBotMessage(
+    `${selectedExercise.title}\n\n${selectedExercise.content}`,
+    getBackButton(),
+    false,
+    false
+  );
 }
 
 // Mostrar ayuda
 function showHelp() {
-    sendBotMessage("❓ AYUDA Y SOPORTE\n\nAquí tienes las instrucciones de uso completas:", null, false, false);
-    
-    setTimeout(() => {
-        sendBotMessage("📝 ESCRIBIR MENSAJES\n\nEscribe cualquier pregunta y presiona Enter o haz clic en enviar.", null, false, false);
-    }, 1500);
-    
-    setTimeout(() => {
-        sendBotMessage("🎯 TIPOS DE PREGUNTAS\n\nPuedes preguntarme sobre:\n• Temas del curso (IA, machine learning, deep learning)\n• Explicaciones de conceptos\n• Ejercicios prácticos\n• Dudas específicas sobre el contenido", null, false, false);
-    }, 3000);
-    
-    setTimeout(() => {
-        sendBotMessage("⌨️ COMANDOS ESPECIALES\n\n• 'ayuda' - Para ver estas instrucciones\n• 'temas' - Para ver los temas disponibles\n• 'ejercicios' - Para solicitar ejercicios prácticos", null, false, false);
-    }, 4500);
-    
-    setTimeout(() => {
-        sendBotMessage("🎧 AUDIO\n\nEl chatbot reproduce audio automáticamente solo en el mensaje de bienvenida.", null, false, false);
-    }, 6000);
-    
-    setTimeout(() => {
-        sendBotMessage("📊 HISTORIAL\n\nTodas las conversaciones se guardan automáticamente.", getBackButton(), false, false);
-    }, 7500);
+  sendBotMessage(
+    '❓ AYUDA Y SOPORTE\n\nAquí tienes las instrucciones de uso completas:',
+    null,
+    false,
+    false
+  );
+
+  setTimeout(() => {
+    sendBotMessage(
+      '📝 ESCRIBIR MENSAJES\n\nEscribe cualquier pregunta y presiona Enter o haz clic en enviar.',
+      null,
+      false,
+      false
+    );
+  }, 1500);
+
+  setTimeout(() => {
+    sendBotMessage(
+      '🎯 TIPOS DE PREGUNTAS\n\nPuedes preguntarme sobre:\n• Temas del curso (IA, machine learning, deep learning)\n• Explicaciones de conceptos\n• Ejercicios prácticos\n• Dudas específicas sobre el contenido',
+      null,
+      false,
+      false
+    );
+  }, 3000);
+
+  setTimeout(() => {
+    sendBotMessage(
+      "⌨️ COMANDOS ESPECIALES\n\n• 'ayuda' - Para ver estas instrucciones\n• 'temas' - Para ver los temas disponibles\n• 'ejercicios' - Para solicitar ejercicios prácticos",
+      null,
+      false,
+      false
+    );
+  }, 4500);
+
+  setTimeout(() => {
+    sendBotMessage(
+      '🎧 AUDIO\n\nEl chatbot reproduce audio automáticamente solo en el mensaje de bienvenida.',
+      null,
+      false,
+      false
+    );
+  }, 6000);
+
+  setTimeout(() => {
+    sendBotMessage(
+      '📊 HISTORIAL\n\nTodas las conversaciones se guardan automáticamente.',
+      getBackButton(),
+      false,
+      false
+    );
+  }, 7500);
 }
 
 // Mostrar glosario
 // Mostrar glosario como panel lateral (no dentro del chat)
 function showGlossary() {
-    // Crear overlay si no existe
-    let overlay = document.getElementById('glossaryOverlay');
-    if (!overlay) {
-        overlay = document.createElement('div');
-        overlay.id = 'glossaryOverlay';
-        overlay.className = 'glossary-overlay';
-        overlay.innerHTML = `
+  // Crear overlay si no existe
+  let overlay = document.getElementById('glossaryOverlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'glossaryOverlay';
+    overlay.className = 'glossary-overlay';
+    overlay.innerHTML = `
             <div class="glossary-panel">
                 <div class="glossary-header">
                     <h3>📖 Glosario de Términos de IA</h3>
@@ -1325,428 +1668,415 @@ function showGlossary() {
                 </div>
             </div>
         `;
-        document.body.appendChild(overlay);
+    document.body.appendChild(overlay);
 
-        // Eventos
-        overlay.querySelector('.glossary-close').addEventListener('click', hideGlossary);
-        overlay.querySelector('#glossaryBack').addEventListener('click', glossaryBackToMenu);
+    // Eventos
+    overlay
+      .querySelector('.glossary-close')
+      .addEventListener('click', hideGlossary);
+    overlay
+      .querySelector('#glossaryBack')
+      .addEventListener('click', glossaryBackToMenu);
 
-        // Construir alfabeto
-        const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-        const grid = overlay.querySelector('#alphabetGrid');
-        alphabet.forEach((letter) => {
-            const btn = document.createElement('button');
-            btn.className = 'alpha-btn';
-            btn.textContent = letter;
-            btn.addEventListener('click', () => renderGlossaryLetter(letter));
-            grid.appendChild(btn);
-        });
+    // Construir alfabeto
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+    const grid = overlay.querySelector('#alphabetGrid');
+    alphabet.forEach(letter => {
+      const btn = document.createElement('button');
+      btn.className = 'alpha-btn';
+      btn.textContent = letter;
+      btn.addEventListener('click', () => renderGlossaryLetter(letter));
+      grid.appendChild(btn);
+    });
+  }
+
+  // Animación: si el panel de prompts está abierto, centrar chat; si no, mover a la izquierda
+  const container = document.querySelector('.telegram-container');
+  const promptOverlay = document.getElementById('promptOverlay');
+  if (container) {
+    if (promptOverlay && promptOverlay.classList.contains('open')) {
+      container.classList.remove('shift-left');
+      container.style.transform = 'translateX(0) scale(0.975)';
+    } else {
+      container.classList.add('shift-left');
+      container.style.removeProperty('transform');
     }
-
-    // Animación: si el panel de prompts está abierto, centrar chat; si no, mover a la izquierda
-    const container = document.querySelector('.telegram-container');
-    const promptOverlay = document.getElementById('promptOverlay');
-    if (container) {
-        if (promptOverlay && promptOverlay.classList.contains('open')) {
-            container.classList.remove('shift-left');
-            container.style.transform = 'translateX(0) scale(0.975)';
-        } else {
-            container.classList.add('shift-left');
-            container.style.removeProperty('transform');
-        }
-    }
-    setTimeout(() => overlay.classList.add('open'), 120);
+  }
+  setTimeout(() => overlay.classList.add('open'), 120);
 }
 
 function hideGlossary() {
-    const overlay = document.getElementById('glossaryOverlay');
-    const container = document.querySelector('.telegram-container');
-    if (overlay) overlay.classList.remove('open');
-    // Ajustar posición del chat según si el panel de prompts sigue abierto
-    setTimeout(() => {
-        const promptOverlay = document.getElementById('promptOverlay');
-        if (promptOverlay && promptOverlay.classList.contains('open')) {
-            if (container) {
-                container.classList.remove('shift-left');
-                container.style.transform = 'translateX(0) scale(0.975)';
-            }
-        } else {
-            if (container) {
-                container.classList.remove('shift-left');
-                container.style.removeProperty('transform');
-            }
-        }
-    }, 150);
+  const overlay = document.getElementById('glossaryOverlay');
+  const container = document.querySelector('.telegram-container');
+  if (overlay) overlay.classList.remove('open');
+  // Ajustar posición del chat según si el panel de prompts sigue abierto
+  setTimeout(() => {
+    const promptOverlay = document.getElementById('promptOverlay');
+    if (promptOverlay && promptOverlay.classList.contains('open')) {
+      if (container) {
+        container.classList.remove('shift-left');
+        container.style.transform = 'translateX(0) scale(0.975)';
+      }
+    } else {
+      if (container) {
+        container.classList.remove('shift-left');
+        container.style.removeProperty('transform');
+      }
+    }
+  }, 150);
 }
 
 // Diccionario simple de términos
 const GLOSSARY = {
-    A: [ { term: 'Algoritmo', def: 'Conjunto de reglas o instrucciones para resolver un problema.' } ],
-    B: [ { term: 'Big Data', def: 'Conjuntos de datos muy grandes y complejos.' } ],
-    C: [ { term: 'CNN', def: 'Red neuronal convolucional.' } ],
-    D: [ { term: 'Deep Learning', def: 'Aprendizaje profundo con redes neuronales.' } ],
-    M: [ { term: 'Machine Learning', def: 'Aprendizaje automático de máquinas.' } ],
-    N: [ { term: 'NLP', def: 'Procesamiento de lenguaje natural.' } ]
+  A: [
+    {
+      term: 'Algoritmo',
+      def: 'Conjunto de reglas o instrucciones para resolver un problema.',
+    },
+  ],
+  B: [{ term: 'Big Data', def: 'Conjuntos de datos muy grandes y complejos.' }],
+  C: [{ term: 'CNN', def: 'Red neuronal convolucional.' }],
+  D: [
+    {
+      term: 'Deep Learning',
+      def: 'Aprendizaje profundo con redes neuronales.',
+    },
+  ],
+  M: [{ term: 'Machine Learning', def: 'Aprendizaje automático de máquinas.' }],
+  N: [{ term: 'NLP', def: 'Procesamiento de lenguaje natural.' }],
 };
 
 function renderGlossaryLetter(letter) {
-    const overlay = document.getElementById('glossaryOverlay');
-    if (!overlay) return;
-    const results = overlay.querySelector('#glossaryResults');
-    const grid = overlay.querySelector('#alphabetGrid');
-    const back = overlay.querySelector('#glossaryBack');
-    const subtitle = overlay.querySelector('#glossarySubtitle');
-    if (grid) grid.style.display = 'none';
-    if (back) back.style.display = 'block';
-    if (subtitle) subtitle.textContent = `Términos disponibles — Letra ${letter}`;
-    const entries = GLOSSARY[letter] || [];
-    if (entries.length === 0) {
-        results.innerHTML = `<h4 class=\"glossary-letter\">Letra ${letter}</h4><div class=\"glossary-empty\">No hay términos para la letra ${letter}</div>`;
-        return;
-    }
-    const items = entries
-        .map(e => `<div class="glossary-item"><div class="term">${e.term}</div><div class="def">${e.def}</div></div>`)
-        .join('');
-    results.innerHTML = `<h4 class=\"glossary-letter\">Letra ${letter}</h4>${items}`;
+  const overlay = document.getElementById('glossaryOverlay');
+  if (!overlay) return;
+  const results = overlay.querySelector('#glossaryResults');
+  const grid = overlay.querySelector('#alphabetGrid');
+  const back = overlay.querySelector('#glossaryBack');
+  const subtitle = overlay.querySelector('#glossarySubtitle');
+  if (grid) grid.style.display = 'none';
+  if (back) back.style.display = 'block';
+  if (subtitle) subtitle.textContent = `Términos disponibles — Letra ${letter}`;
+  const entries = GLOSSARY[letter] || [];
+  if (entries.length === 0) {
+    results.innerHTML = `<h4 class=\"glossary-letter\">Letra ${letter}</h4><div class=\"glossary-empty\">No hay términos para la letra ${letter}</div>`;
+    return;
+  }
+  const items = entries
+    .map(
+      e =>
+        `<div class="glossary-item"><div class="term">${e.term}</div><div class="def">${e.def}</div></div>`
+    )
+    .join('');
+  results.innerHTML = `<h4 class=\"glossary-letter\">Letra ${letter}</h4>${items}`;
 }
 
 function glossaryBackToMenu() {
-    const overlay = document.getElementById('glossaryOverlay');
-    if (!overlay) return;
-    const grid = overlay.querySelector('#alphabetGrid');
-    const back = overlay.querySelector('#glossaryBack');
-    const results = overlay.querySelector('#glossaryResults');
-    const subtitle = overlay.querySelector('#glossarySubtitle');
-    if (grid) grid.style.display = 'grid';
-    if (back) back.style.display = 'none';
-    if (subtitle) subtitle.textContent = 'Selecciona una letra para ver los términos disponibles:';
-    if (results) results.innerHTML = '<div class="glossary-empty">Selecciona una letra</div>';
+  const overlay = document.getElementById('glossaryOverlay');
+  if (!overlay) return;
+  const grid = overlay.querySelector('#alphabetGrid');
+  const back = overlay.querySelector('#glossaryBack');
+  const results = overlay.querySelector('#glossaryResults');
+  const subtitle = overlay.querySelector('#glossarySubtitle');
+  if (grid) grid.style.display = 'grid';
+  if (back) back.style.display = 'none';
+  if (subtitle)
+    subtitle.textContent =
+      'Selecciona una letra para ver los términos disponibles:';
+  if (results)
+    results.innerHTML =
+      '<div class="glossary-empty">Selecciona una letra</div>';
 }
 
 // Función para hacer llamadas a OpenAI de forma segura
 async function callOpenAI(prompt, context = '') {
-    try {
-        const response = await fetch('/api/openai', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-API-Key': getApiKey(),
-                ...getUserAuthHeaders(),
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            credentials: 'same-origin',
-            body: JSON.stringify({ prompt, context })
-        });
+  try {
+    const response = await fetch('/api/openai', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-Key': getApiKey(),
+        ...getUserAuthHeaders(),
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+      credentials: 'same-origin',
+      body: JSON.stringify({ prompt, context }),
+    });
 
-        if (!response.ok) {
-            throw new Error(`Error en la API: ${response.status}`);
-        }
-
-        const data = await response.json();
-        return data.response;
-    } catch (error) {
-        console.error('Error llamando a OpenAI:', error);
-        return null;
+    if (!response.ok) {
+      throw new Error(`Error en la API: ${response.status}`);
     }
+
+    const data = await response.json();
+    return data.response;
+  } catch (error) {
+    console.error('Error llamando a OpenAI:', error);
+    return null;
+  }
 }
 
 // Función para consultar la base de datos de forma segura
 async function queryDatabase(query, params = []) {
-    try {
-        const response = await fetch('/api/database', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-API-Key': getApiKey(),
-                ...getUserAuthHeaders(),
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            credentials: 'same-origin',
-            body: JSON.stringify({ query, params })
-        });
+  try {
+    const response = await fetch('/api/database', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-Key': getApiKey(),
+        ...getUserAuthHeaders(),
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+      credentials: 'same-origin',
+      body: JSON.stringify({ query, params }),
+    });
 
-        if (!response.ok) {
-            throw new Error(`Error en la API: ${response.status}`);
-        }
-
-        const data = await response.json();
-        return data.data;
-    } catch (error) {
-        console.error('Error consultando base de datos:', error);
-        return [];
+    if (!response.ok) {
+      throw new Error(`Error en la API: ${response.status}`);
     }
+
+    const data = await response.json();
+    return data.data;
+  } catch (error) {
+    console.error('Error consultando base de datos:', error);
+    return [];
+  }
 }
 
 // Función para obtener contexto de la base de datos de forma segura
 async function getDatabaseContext(userQuestion) {
-    try {
-        const response = await fetch('/api/context', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-API-Key': getApiKey(),
-                ...getUserAuthHeaders(),
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            credentials: 'same-origin',
-            body: JSON.stringify({ userQuestion })
-        });
+  try {
+    const response = await fetch('/api/context', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-Key': getApiKey(),
+        ...getUserAuthHeaders(),
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+      credentials: 'same-origin',
+      body: JSON.stringify({ userQuestion }),
+    });
 
-        if (!response.ok) {
-            throw new Error(`Error en la API: ${response.status}`);
-        }
-
-        const data = await response.json();
-        return data.data;
-    } catch (error) {
-        console.error('Error obteniendo contexto de BD:', error);
-        return [];
+    if (!response.ok) {
+      throw new Error(`Error en la API: ${response.status}`);
     }
+
+    const data = await response.json();
+    return data.data;
+  } catch (error) {
+    console.error('Error obteniendo contexto de BD:', error);
+    return [];
+  }
 }
 
 // Función para obtener la API key de forma segura
 function getApiKey() {
-    // Para desarrollo, retorna una clave fija
-    return 'dev-api-key';
+  // Para desarrollo, retorna una clave fija
+  return 'dev-api-key';
 }
 
 // Función para generar una clave de sesión temporal
 function generateSessionKey() {
-    const timestamp = Date.now();
-    const random = Math.random().toString(36).substring(2);
-    return btoa(`${timestamp}-${random}`).replace(/[^a-zA-Z0-9]/g, '');
+  const timestamp = Date.now();
+  const random = Math.random().toString(36).substring(2);
+  return btoa(`${timestamp}-${random}`).replace(/[^a-zA-Z0-9]/g, '');
 }
 
 // Encabezados de autenticación de usuario
 function getUserAuthHeaders() {
-    // Para desarrollo, retorna headers vacíos ya que la autenticación está deshabilitada en el servidor
-    return {};
+  // Para desarrollo, retorna headers vacíos ya que la autenticación está deshabilitada en el servidor
+  return {};
 }
 
 // Procesar mensaje del usuario con IA
 async function processUserMessageWithAI(message) {
-    try {
-        // Obtener contexto de la base de datos (si está disponible)
-        const dbContext = await getDatabaseContext(message);
+  try {
+    // Obtener contexto de la base de datos
+    const dbContext = await getDatabaseContext(message);
+
+    // Construir prompt completo
+    const systemPrompt = `Eres Lia IA, asistente educativo especializado en inteligencia artificial.
         
-        // Construir contexto de BD de forma más legible
-        let contextInfo = '';
-        if (dbContext.length > 0) {
-            contextInfo = '\n\nInformación relevante de la base de datos:\n';
-            dbContext.forEach(item => {
-                switch (item.source) {
-                    case 'glossary':
-                        contextInfo += `📖 Glosario: ${item.term} - ${item.definition}\n`;
-                        break;
-                    case 'faq':
-                        contextInfo += `❓ FAQ (${item.session_title}): ${item.question} - ${item.answer}\n`;
-                        break;
-                    case 'activity':
-                        contextInfo += `🎯 Actividad (${item.session_title}): ${item.title} - ${item.description || ''}\n`;
-                        break;
-                    case 'question':
-                        contextInfo += `🤔 Pregunta (${item.session_title}): ${item.text}\n`;
-                        break;
-                }
-            });
-        }
+        Responde en español de forma clara, educativa y útil.
+        Si la pregunta está fuera del ámbito de IA, redirige amablemente al curso.
         
-        // Prompt completo siguiendo PROMPT_CLAUDE.md al pie de la letra
-        const systemPrompt = `Sistema — Claude (ES)
-
-Rol y alcance
-- Eres "Asistente de Aprende y Aplica IA": experto en IA que guía a estudiantes en español con tono profesional, cercano y nada robotizado.
-- Límite estricto: céntrate en contenidos del curso de IA, ejercicios, glosario y actividades. Si algo está fuera de alcance, redirige amablemente con 2–4 opciones del temario.
-
-Objetivo general
-- Entregar respuestas claras, accionables y verificables; generar casos de uso y prompts listos para copiar cuando aporten valor.
-
-Manejo de preguntas largas
-- Acepta entradas extensas sin recortar contenido. Resume el objetivo en 1–2 líneas, divide en sub‑tareas y responde por secciones. Si la consulta es muy amplia, propone un plan paso a paso y entrega un primer bloque útil; ofrece continuar con "¿sigo con la parte B/C…?)".
-
-Detección de ánimo (obligatoria)
-- Clasifica el ánimo del usuario en: entusiasta | neutral | confundido | frustrado | molesto | troll/"pregunta tonta".
-- Adapta el tono en consecuencia: breve‑enérgico (entusiasta), calmado y paso a paso (confundido/frustrado), firme y respetuoso (molesto). Si detectas troll/pregunta tonta, usa sarcasmo ligero y pertinente al curso sin atacar a la persona.
-
-Política de sarcasmo (seguro y útil)
-- Solo cuando la intención sea claramente trivial/troll y manteniendo el foco educativo.
-- Hazlo en una línea, ingenioso y relacionado con IA/curso. Evita insultos, estereotipos o humillaciones.
-
-Desambiguación y complejidad
-- Si la consulta es ambigua o falta contexto, formula 1–2 preguntas de aclaración o continúa bajo supuestos explícitos.
-- Para preguntas complejas, divide en secciones con pasos y ejemplos; termina con una mini‑conclusión.
-- Si hay cifras o estado del arte cambiante, márcalo como aproximado/sujeto a cambios.
-
-Casos de uso (cuando aplique)
-- Entrega 3–5 casos con: propósito, pasos clave, herramientas/recursos, métrica de éxito y riesgo/consideración.
-
-Prompts (cuando aplique)
-- Ofrece 2–4 prompts listos para copiar orientados a estudio/práctica o evaluación, alineados al temario.
-
-Formato de respuesta
-- 1 línea inicial que responda directo a la intención.
-- 3–6 viñetas con lo esencial (usa **negritas** para conceptos clave).
-- Cierra con una pregunta breve que proponga el siguiente paso u opciones del curso.
-- Español neutro, claro y preciso. Evita párrafos largos; usa listas.
-
-Límites y seguridad
-- No inventes enlaces ni bibliografía. No des instrucciones peligrosas.
-- Si no sabes algo, admítelo y sugiere cómo investigarlo dentro del marco del curso.
-
-Nunca pidas el nombre/apellido del usuario ni bloquees la conversación por identificación.
-
-${contextInfo}
-
-Responde siguiendo exactamente el formato especificado:`;
+        Contexto del curso: Fundamentos de IA, Machine Learning, Deep Learning, Aplicaciones prácticas.
         
-        const fullPrompt = `${systemPrompt}\n\nUsuario: ${message}\n\nAsistente:`;
-        
-        // Llamar a OpenAI
-        const aiResponse = await callOpenAI(fullPrompt, contextInfo);
-        return aiResponse;
-    } catch (error) {
-        console.error('Error procesando mensaje con IA:', error);
-        
-        console.error('❌ Error completo:', error);
-        
-        // Mostrar detalles del error en consola para debugging
-        if (error.response) {
-            try {
-                const errorData = await error.response.json();
-                console.error('📋 Error details:', errorData);
-            } catch (e) {
-                console.error('📋 Error text:', await error.response.text());
-            }
-        }
-        
-        // Mensaje de error siguiendo formato PROMPT_CLAUDE.md
-        return `Hubo un problema temporal con el servicio, pero sigo disponible para ayudarte.
+        ${
+          dbContext.length > 0
+            ? '\nInformación relevante:\n' +
+              dbContext
+                .map(
+                  item =>
+                    `- ${item.term || item.question || item.title}: ${item.definition || item.answer || item.description}`
+                )
+                .join('\n')
+            : ''
+        }`;
 
-• **Problema técnico**: Conexión temporalmente interrumpida
-• **Alternativas**: Puedo ayudarte con conceptos básicos de IA como **prompts**, **LLMs** o **tokens**
-• **Ejercicios**: Disponibles algoritmos de clasificación, redes neuronales básicas
-• **Navegación**: Usa el menú principal para acceder a temas organizados
+    const fullPrompt = `${systemPrompt}\n\nUsuario: ${message}\n\nLia IA:`;
 
-¿Prefieres explorar fundamentos de IA, ejercicios prácticos o consultar el glosario?`;
+    // Llamar a OpenAI
+    const response = await fetch('/api/openai', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-Key': getApiKey(),
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+      body: JSON.stringify({
+        prompt: fullPrompt,
+        context: dbContext.length > 0 ? JSON.stringify(dbContext) : '',
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error API: ${response.status}`);
     }
+
+    const data = await response.json();
+    return (
+      data.response ||
+      'Lo siento, no pude procesar tu pregunta. ¿Puedes reformularla?'
+    );
+  } catch (error) {
+    console.error('Error procesando mensaje:', error);
+    return `Hubo un problema técnico temporal. Puedo ayudarte con:
+        
+        • **Conceptos básicos de IA**: prompts, LLMs, tokens
+        • **Ejercicios prácticos**: clasificación, redes neuronales
+        • **Navegación del curso**: usa el menú para explorar temas
+        
+        ¿Qué te gustaría aprender sobre IA?`;
+  }
 }
 
 // Enviar mensaje
 function sendMessage() {
-    const message = messageInput.value.trim();
-    if (!message || chatState.isTyping) return;
+  const message = messageInput.value.trim();
+  if (!message || chatState.isTyping) return;
 
-    addUserMessage(message);
-    messageInput.value = '';
-    messageInput.style.height = 'auto';
+  addUserMessage(message);
+  messageInput.value = '';
+  messageInput.style.height = 'auto';
 
-    // Mostrar indicador de escritura
-    showTypingIndicator();
+  // Mostrar indicador de escritura
+  showTypingIndicator();
 
-    setTimeout(async () => {
-        hideTypingIndicator();
-        await handleUserMessage(message);
-    }, 300);
+  setTimeout(async () => {
+    hideTypingIndicator();
+    await handleUserMessage(message);
+  }, 300);
 }
 
 // Procesar mensaje del usuario
 async function handleUserMessage(message) {
-    if (chatState.currentState === 'start' && !chatState.userName) {
-        // Ya no se requiere capturar nombre; ir directo al procesamiento IA
-        chatState.currentState = 'main_menu';
-        showMainMenu();
-        const response = await processUserMessageWithAI(message);
-        await sendBotMessage(response, null, false, false);
-    } else {
-        // Procesar otros mensajes con IA
-        const response = await processUserMessageWithAI(message);
-        await sendBotMessage(response, null, false, false);
-    }
+  if (chatState.currentState === 'start' && !chatState.userName) {
+    // Ya no se requiere capturar nombre; ir directo al procesamiento IA
+    chatState.currentState = 'main_menu';
+    showMainMenu();
+    const response = await processUserMessageWithAI(message);
+    await sendBotMessage(response, null, false, false);
+  } else {
+    // Procesar otros mensajes con IA
+    const response = await processUserMessageWithAI(message);
+    await sendBotMessage(response, null, false, false);
+  }
 }
 
 // Generar respuesta
 function generateResponse(message) {
-    const responses = {
-        'hola': '¡Hola! Me alegra verte. ¿Cómo estás hoy?',
-        'buenos días': '¡Buenos días! Espero que tengas un excelente día. ¿En qué puedo ayudarte?',
-        'buenas tardes': '¡Buenas tardes! ¿Cómo va tu día?',
-        'buenas noches': '¡Buenas noches! ¿Listo para aprender algo nuevo?',
-        'ayuda': 'Usa los botones del menú principal para navegar o escribe "ayuda" para ver las instrucciones completas.',
-        'temas': 'Usa el botón "📚 Temas del Curso" en el menú principal para explorar todos los temas disponibles.',
-        'ejercicios': 'Usa el botón "🧠 Ejercicios Prácticos" en el menú principal para ver todos los ejercicios disponibles.',
-        'adiós': '¡Hasta luego! Ha sido un placer ayudarte. ¡Que tengas un excelente día!',
-        'gracias': '¡De nada! Me alegra haber podido ayudarte. ¿Hay algo más en lo que pueda asistirte?',
-        'chao': '¡Chao! Espero verte pronto. ¡Sigue aprendiendo!'
-    };
+  const responses = {
+    hola: '¡Hola! Me alegra verte. ¿Cómo estás hoy?',
+    'buenos días':
+      '¡Buenos días! Espero que tengas un excelente día. ¿En qué puedo ayudarte?',
+    'buenas tardes': '¡Buenas tardes! ¿Cómo va tu día?',
+    'buenas noches': '¡Buenas noches! ¿Listo para aprender algo nuevo?',
+    ayuda:
+      'Usa los botones del menú principal para navegar o escribe "ayuda" para ver las instrucciones completas.',
+    temas:
+      'Usa el botón "📚 Temas del Curso" en el menú principal para explorar todos los temas disponibles.',
+    ejercicios:
+      'Usa el botón "🧠 Ejercicios Prácticos" en el menú principal para ver todos los ejercicios disponibles.',
+    adiós:
+      '¡Hasta luego! Ha sido un placer ayudarte. ¡Que tengas un excelente día!',
+    gracias:
+      '¡De nada! Me alegra haber podido ayudarte. ¿Hay algo más en lo que pueda asistirte?',
+    chao: '¡Chao! Espero verte pronto. ¡Sigue aprendiendo!',
+  };
 
-    for (const [key, response] of Object.entries(responses)) {
-        if (message.includes(key)) {
-            return response;
-        }
+  for (const [key, response] of Object.entries(responses)) {
+    if (message.includes(key)) {
+      return response;
     }
+  }
 
-    const defaultResponses = [
-        'Interesante pregunta. Déjame pensar en la mejor manera de explicártelo...',
-        'Esa es una excelente pregunta. Te ayudo a entenderlo mejor.',
-        'Me gusta tu curiosidad. Vamos a explorar ese tema juntos.',
-        'Excelente pregunta. Te explico de manera clara y sencilla.',
-        '¡Buena pregunta! Te ayudo a comprender este concepto.'
-    ];
+  const defaultResponses = [
+    'Interesante pregunta. Déjame pensar en la mejor manera de explicártelo...',
+    'Esa es una excelente pregunta. Te ayudo a entenderlo mejor.',
+    'Me gusta tu curiosidad. Vamos a explorar ese tema juntos.',
+    'Excelente pregunta. Te explico de manera clara y sencilla.',
+    '¡Buena pregunta! Te ayudo a comprender este concepto.',
+  ];
 
-    return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+  return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
 }
 
 // Funciones de utilidad para botones
-function getBackButton() { return ``; }
+function getBackButton() {
+  return ``;
+}
 
 // Scroll al final del chat
 function scrollToBottom() {
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+  chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
 // Controlar audio
 function toggleAudio() {
-    chatState.audioEnabled = !chatState.audioEnabled;
-    // Si se desactiva durante una reproducción, detenerla inmediatamente
-    try {
-        if (!chatState.audioEnabled) {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-            }
-            if (chatState.currentAudio && typeof chatState.currentAudio.pause === 'function') {
-                chatState.currentAudio.pause();
-                chatState.currentAudio.currentTime = 0;
-            }
-        }
-    } catch(_) {}
-    console.log('Audio ' + (chatState.audioEnabled ? 'activado' : 'desactivado'));
-    return chatState.audioEnabled;
+  chatState.audioEnabled = !chatState.audioEnabled;
+  // Si se desactiva durante una reproducción, detenerla inmediatamente
+  try {
+    if (!chatState.audioEnabled) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      if (
+        chatState.currentAudio &&
+        typeof chatState.currentAudio.pause === 'function'
+      ) {
+        chatState.currentAudio.pause();
+        chatState.currentAudio.currentTime = 0;
+      }
+    }
+  } catch (_) {}
+  console.log('Audio ' + (chatState.audioEnabled ? 'activado' : 'desactivado'));
+  return chatState.audioEnabled;
 }
 
 // Obtener estado del audio
 function getAudioStatus() {
-    return chatState.audioEnabled;
+  return chatState.audioEnabled;
 }
 
 // Configurar volumen
 function setAudioVolume(volume) {
-    if (volume >= 0 && volume <= 1) {
-        CHATBOT_CONFIG.welcomeAudio.volume = volume;
-        console.log('Volumen configurado a:', volume);
-    }
+  if (volume >= 0 && volume <= 1) {
+    CHATBOT_CONFIG.welcomeAudio.volume = volume;
+    console.log('Volumen configurado a:', volume);
+  }
 }
 
 // Mostrar indicador de escritura
 function showTypingIndicator() {
-    if (chatState.isTyping) return;
-    
-    chatState.isTyping = true;
-    
-    const typingDiv = document.createElement('div');
-    typingDiv.className = 'message bot-message typing-indicator';
-    typingDiv.id = 'typingIndicator';
-    
-    typingDiv.innerHTML = `
+  if (chatState.isTyping) return;
+
+  chatState.isTyping = true;
+
+  const typingDiv = document.createElement('div');
+  typingDiv.className = 'message bot-message typing-indicator';
+  typingDiv.id = 'typingIndicator';
+
+  typingDiv.innerHTML = `
         <div class="typing-avatar">
             <div class="avatar-circle"><span class="avatar-emoji">🤖</span></div>
             <div class="typing-dots">
@@ -1756,665 +2086,927 @@ function showTypingIndicator() {
             </div>
         </div>
     `;
-    
-    chatMessages.appendChild(typingDiv);
-    scrollToBottom();
+
+  chatMessages.appendChild(typingDiv);
+  scrollToBottom();
 }
 
 // Ocultar indicador de escritura
 function hideTypingIndicator() {
-    const typingIndicator = document.getElementById('typingIndicator');
-    if (typingIndicator) {
-        typingIndicator.remove();
-    }
-    chatState.isTyping = false;
+  const typingIndicator = document.getElementById('typingIndicator');
+  if (typingIndicator) {
+    typingIndicator.remove();
+  }
+  chatState.isTyping = false;
 }
 
 // ===== Sistema de gestión de sesiones =====
 let sessionManager = {
-    sessions: new Map(),
-    currentSession: null,
-    nextId: 1
+  sessions: new Map(),
+  currentSession: null,
+  nextId: 1,
 };
 
 function initializeSessionManager() {
-    // Cargar sesiones desde localStorage
-    try {
-        const saved = localStorage.getItem('chat_sessions');
-        if (saved) {
-            const data = JSON.parse(saved);
-            sessionManager.sessions = new Map(data.sessions || []);
-            sessionManager.currentSession = data.currentSession || null;
-            sessionManager.nextId = data.nextId || 1;
-        }
-    } catch (_) {}
-    
-    // Crear sesión inicial si no existe
-    if (sessionManager.sessions.size === 0) {
-        createNewSession();
+  // Cargar sesiones desde localStorage
+  try {
+    const saved = localStorage.getItem('chat_sessions');
+    if (saved) {
+      const data = JSON.parse(saved);
+      sessionManager.sessions = new Map(data.sessions || []);
+      sessionManager.currentSession = data.currentSession || null;
+      sessionManager.nextId = data.nextId || 1;
     }
-    
-    updateSessionUI();
+  } catch (_) {}
+
+  // Crear sesión inicial si no existe
+  if (sessionManager.sessions.size === 0) {
+    createNewSession();
+  }
+
+  updateSessionUI();
 }
 
 function saveSessions() {
-    try {
-        const data = {
-            sessions: Array.from(sessionManager.sessions.entries()),
-            currentSession: sessionManager.currentSession,
-            nextId: sessionManager.nextId
-        };
-        localStorage.setItem('chat_sessions', JSON.stringify(data));
-    } catch (_) {}
+  try {
+    const data = {
+      sessions: Array.from(sessionManager.sessions.entries()),
+      currentSession: sessionManager.currentSession,
+      nextId: sessionManager.nextId,
+    };
+    localStorage.setItem('chat_sessions', JSON.stringify(data));
+  } catch (_) {}
 }
 
 function createNewSession() {
-    const sessionId = `sess_${sessionManager.nextId++}`;
-    const session = {
-        id: sessionId,
-        title: `Nueva sesión ${sessionManager.sessions.size + 1}`,
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-        messages: []
-    };
-    
-    sessionManager.sessions.set(sessionId, session);
-    sessionManager.currentSession = sessionId;
-    
-    // Limpiar chat actual
-    chatState.conversationHistory = [];
-    const chatMessages = document.getElementById('chatMessages');
-    if (chatMessages) chatMessages.innerHTML = '';
-    
-    saveSessions();
-    updateSessionUI();
-    initializeChat(); // Reiniciar chat con mensaje de bienvenida
+  const sessionId = `sess_${sessionManager.nextId++}`;
+  const session = {
+    id: sessionId,
+    title: `Nueva sesión ${sessionManager.sessions.size + 1}`,
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    messages: [],
+  };
+
+  sessionManager.sessions.set(sessionId, session);
+  sessionManager.currentSession = sessionId;
+
+  // Limpiar chat actual
+  chatState.conversationHistory = [];
+  const chatMessages = document.getElementById('chatMessages');
+  if (chatMessages) chatMessages.innerHTML = '';
+
+  saveSessions();
+  updateSessionUI();
+  initializeChat(); // Reiniciar chat con mensaje de bienvenida
 }
 
 function switchToSession(sessionId) {
-    if (!sessionManager.sessions.has(sessionId)) return;
-    
-    // Guardar mensajes de sesión actual
-    if (sessionManager.currentSession) {
-        const currentSession = sessionManager.sessions.get(sessionManager.currentSession);
-        if (currentSession) {
-            currentSession.messages = [...chatState.conversationHistory];
-            currentSession.updatedAt = Date.now();
-        }
+  if (!sessionManager.sessions.has(sessionId)) return;
+
+  // Guardar mensajes de sesión actual
+  if (sessionManager.currentSession) {
+    const currentSession = sessionManager.sessions.get(
+      sessionManager.currentSession
+    );
+    if (currentSession) {
+      currentSession.messages = [...chatState.conversationHistory];
+      currentSession.updatedAt = Date.now();
     }
-    
-    // Cambiar a nueva sesión
-    sessionManager.currentSession = sessionId;
-    const session = sessionManager.sessions.get(sessionId);
-    
-    // Restaurar mensajes
-    chatState.conversationHistory = [...(session.messages || [])];
-    
-    // Actualizar UI del chat
-    const chatMessages = document.getElementById('chatMessages');
-    if (chatMessages) {
-        chatMessages.innerHTML = '';
-        chatState.conversationHistory.forEach(msg => {
-            if (msg.type === 'bot') {
-                addBotMessage(msg.content, null, false, false);
-            } else {
-                addUserMessage(msg.content);
-            }
-        });
-    }
-    
-    saveSessions();
-    updateSessionUI();
-    hideSessionMenu();
+  }
+
+  // Cambiar a nueva sesión
+  sessionManager.currentSession = sessionId;
+  const session = sessionManager.sessions.get(sessionId);
+
+  // Restaurar mensajes
+  chatState.conversationHistory = [...(session.messages || [])];
+
+  // Actualizar UI del chat
+  const chatMessages = document.getElementById('chatMessages');
+  if (chatMessages) {
+    chatMessages.innerHTML = '';
+    chatState.conversationHistory.forEach(msg => {
+      if (msg.type === 'bot') {
+        addBotMessage(msg.content, null, false, false);
+      } else {
+        addUserMessage(msg.content);
+      }
+    });
+  }
+
+  saveSessions();
+  updateSessionUI();
+  hideSessionMenu();
 }
 
 function renameSession(sessionId, newTitle) {
-    const session = sessionManager.sessions.get(sessionId);
-    if (session) {
-        session.title = newTitle;
-        session.updatedAt = Date.now();
-        saveSessions();
-        updateSessionUI();
-    }
+  const session = sessionManager.sessions.get(sessionId);
+  if (session) {
+    session.title = newTitle;
+    session.updatedAt = Date.now();
+    saveSessions();
+    updateSessionUI();
+  }
 }
 
 function duplicateSession(sessionId) {
-    const originalSession = sessionManager.sessions.get(sessionId);
-    if (!originalSession) return;
-    
-    const newSessionId = `sess_${sessionManager.nextId++}`;
-    const duplicatedSession = {
-        id: newSessionId,
-        title: `${originalSession.title} (copia)`,
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-        messages: [...originalSession.messages]
-    };
-    
-    sessionManager.sessions.set(newSessionId, duplicatedSession);
-    saveSessions();
-    updateSessionUI();
+  const originalSession = sessionManager.sessions.get(sessionId);
+  if (!originalSession) return;
+
+  const newSessionId = `sess_${sessionManager.nextId++}`;
+  const duplicatedSession = {
+    id: newSessionId,
+    title: `${originalSession.title} (copia)`,
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    messages: [...originalSession.messages],
+  };
+
+  sessionManager.sessions.set(newSessionId, duplicatedSession);
+  saveSessions();
+  updateSessionUI();
 }
 
 function archiveSession(sessionId) {
-    if (sessionManager.sessions.size <= 1) {
-        alert('No puedes archivar la última sesión');
-        return;
+  if (sessionManager.sessions.size <= 1) {
+    alert('No puedes archivar la última sesión');
+    return;
+  }
+
+  sessionManager.sessions.delete(sessionId);
+
+  // Si era la sesión actual, cambiar a otra
+  if (sessionManager.currentSession === sessionId) {
+    const firstSession = sessionManager.sessions.keys().next().value;
+    if (firstSession) {
+      switchToSession(firstSession);
+    } else {
+      createNewSession();
     }
-    
-    sessionManager.sessions.delete(sessionId);
-    
-    // Si era la sesión actual, cambiar a otra
-    if (sessionManager.currentSession === sessionId) {
-        const firstSession = sessionManager.sessions.keys().next().value;
-        if (firstSession) {
-            switchToSession(firstSession);
-        } else {
-            createNewSession();
-        }
-    }
-    
-    saveSessions();
-    updateSessionUI();
+  }
+
+  saveSessions();
+  updateSessionUI();
 }
 
 function updateSessionUI() {
-    const currentSessionTitle = document.getElementById('currentSessionTitle');
-    const sessionList = document.getElementById('sessionList');
-    
-    if (currentSessionTitle && sessionManager.currentSession) {
-        const currentSession = sessionManager.sessions.get(sessionManager.currentSession);
-        currentSessionTitle.textContent = currentSession?.title || 'Nueva sesión';
-    }
-    
-    if (sessionList) {
-        sessionList.innerHTML = '';
-        sessionManager.sessions.forEach((session, id) => {
-            const item = document.createElement('div');
-            item.className = `session-item ${id === sessionManager.currentSession ? 'active' : ''}`;
-            item.innerHTML = `
+  const currentSessionTitle = document.getElementById('currentSessionTitle');
+  const sessionList = document.getElementById('sessionList');
+
+  if (currentSessionTitle && sessionManager.currentSession) {
+    const currentSession = sessionManager.sessions.get(
+      sessionManager.currentSession
+    );
+    currentSessionTitle.textContent = currentSession?.title || 'Nueva sesión';
+  }
+
+  if (sessionList) {
+    sessionList.innerHTML = '';
+    sessionManager.sessions.forEach((session, id) => {
+      const item = document.createElement('div');
+      item.className = `session-item ${id === sessionManager.currentSession ? 'active' : ''}`;
+      item.innerHTML = `
                 <div class="session-item-title">${session.title}</div>
                 <div class="session-item-meta">
                     <span>${new Date(session.updatedAt).toLocaleDateString()}</span>
                     <span>${session.messages.length} mensajes</span>
                 </div>
             `;
-            item.addEventListener('click', () => switchToSession(id));
-            sessionList.appendChild(item);
-        });
-    }
+      item.addEventListener('click', () => switchToSession(id));
+      sessionList.appendChild(item);
+    });
+  }
 }
 
 function toggleSessionMenu() {
-    const sessionMenu = document.getElementById('sessionMenu');
-    const sessionMenuButton = document.getElementById('sessionMenuButton');
-    
-    if (sessionMenu && sessionMenuButton) {
-        const isOpen = sessionMenu.classList.contains('show');
-        
-        if (isOpen) {
-            hideSessionMenu();
-        } else {
-            showSessionMenu();
-        }
+  const sessionMenu = document.getElementById('sessionMenu');
+  const sessionMenuButton = document.getElementById('sessionMenuButton');
+
+  if (sessionMenu && sessionMenuButton) {
+    const isOpen = sessionMenu.classList.contains('show');
+
+    if (isOpen) {
+      hideSessionMenu();
+    } else {
+      showSessionMenu();
     }
+  }
 }
 
 function showSessionMenu() {
-    const sessionMenu = document.getElementById('sessionMenu');
-    const sessionMenuButton = document.getElementById('sessionMenuButton');
-    
-    if (sessionMenu && sessionMenuButton) {
-        sessionMenu.classList.add('show');
-        sessionMenuButton.classList.add('active');
-        updateSessionUI();
-    }
+  const sessionMenu = document.getElementById('sessionMenu');
+  const sessionMenuButton = document.getElementById('sessionMenuButton');
+
+  if (sessionMenu && sessionMenuButton) {
+    sessionMenu.classList.add('show');
+    sessionMenuButton.classList.add('active');
+    updateSessionUI();
+  }
 }
 
 function hideSessionMenu() {
-    const sessionMenu = document.getElementById('sessionMenu');
-    const sessionMenuButton = document.getElementById('sessionMenuButton');
-    
-    if (sessionMenu && sessionMenuButton) {
-        sessionMenu.classList.remove('show');
-        sessionMenuButton.classList.remove('active');
-    }
+  const sessionMenu = document.getElementById('sessionMenu');
+  const sessionMenuButton = document.getElementById('sessionMenuButton');
+
+  if (sessionMenu && sessionMenuButton) {
+    sessionMenu.classList.remove('show');
+    sessionMenuButton.classList.remove('active');
+  }
 }
 
 function handleSessionAction(action) {
-    const currentSessionId = sessionManager.currentSession;
-    
-    switch (action) {
-        case 'new':
-            createNewSession();
-            hideSessionMenu();
-            break;
-            
-        case 'rename':
-            if (currentSessionId) {
-                const currentSession = sessionManager.sessions.get(currentSessionId);
-                const newTitle = prompt('Nuevo título para la sesión:', currentSession?.title || '');
-                if (newTitle && newTitle.trim()) {
-                    renameSession(currentSessionId, newTitle.trim());
-                }
-            }
-            break;
-            
-        case 'duplicate':
-            if (currentSessionId) {
-                duplicateSession(currentSessionId);
-            }
-            break;
-            
-        case 'archive':
-            if (currentSessionId && confirm('¿Estás seguro de que quieres archivar esta sesión?')) {
-                archiveSession(currentSessionId);
-                hideSessionMenu();
-            }
-            break;
-    }
+  const currentSessionId = sessionManager.currentSession;
+
+  switch (action) {
+    case 'new':
+      createNewSession();
+      hideSessionMenu();
+      break;
+
+    case 'rename':
+      if (currentSessionId) {
+        const currentSession = sessionManager.sessions.get(currentSessionId);
+        const newTitle = prompt(
+          'Nuevo título para la sesión:',
+          currentSession?.title || ''
+        );
+        if (newTitle && newTitle.trim()) {
+          renameSession(currentSessionId, newTitle.trim());
+        }
+      }
+      break;
+
+    case 'duplicate':
+      if (currentSessionId) {
+        duplicateSession(currentSessionId);
+      }
+      break;
+
+    case 'archive':
+      if (
+        currentSessionId &&
+        confirm('¿Estás seguro de que quieres archivar esta sesión?')
+      ) {
+        archiveSession(currentSessionId);
+        hideSessionMenu();
+      }
+      break;
+  }
 }
 
 // Inicializar sistema de sesiones al cargar
 document.addEventListener('DOMContentLoaded', () => {
-    initializeSessionManager();
-    setupResizableRight();
+  initializeSessionManager();
+  setupResizableRight();
 });
 
 // Exportar funciones para uso externo
 window.Chatbot = {
-    sendMessage,
-    addBotMessage,
-    addUserMessage,
-    getConversationHistory: () => chatState.conversationHistory,
-    toggleAudio,
-    getAudioStatus,
-    setAudioVolume,
-    playWelcomeAudio,
-    // Navegación de sesiones
-    showSessionsForTopic,
-    openTopicSession,
-    // Gestión de sesiones
-    sessionManager,
-    createNewSession,
-    switchToSession,
-    renameSession,
-    duplicateSession,
-    archiveSession
-}; 
+  sendMessage,
+  addBotMessage,
+  addUserMessage,
+  getConversationHistory: () => chatState.conversationHistory,
+  toggleAudio,
+  getAudioStatus,
+  setAudioVolume,
+  playWelcomeAudio,
+  // Navegación de sesiones
+  showSessionsForTopic,
+  openTopicSession,
+  // Gestión de sesiones
+  sessionManager,
+  createNewSession,
+  switchToSession,
+  renameSession,
+  duplicateSession,
+  archiveSession,
+};
 
 // Render del selector de sesiones/módulos dentro del menú
 function renderSessionPicker() {
-    const picker = document.getElementById('sessionPicker');
-    if (!picker) return;
-    const html = Object.entries(COURSE_SESSIONS).map(([num, s]) => `
-        <button class=\"session-item\" data-session=\"${num}\" data-module=\"0\">\n            <span class=\"module-index\">S${num}</span>\n            <span class=\"module-title\">${s.title}</span>\n        </button>
-    `).join('');
-    picker.innerHTML = `<div class=\"module-list\">${html}</div>`;
+  const picker = document.getElementById('sessionPicker');
+  if (!picker) return;
+
+  const html = Object.entries(SESSION_MODULES)
+    .map(
+      ([num, session]) => `
+        <button class="session-item" data-session="${num}">
+            <span class="session-index">S${num}</span>
+            <span class="session-title">${session.title}</span>
+        </button>
+    `
+    )
+    .join('');
+
+  picker.innerHTML = `<div class="session-list">${html}</div>`;
+
+  // Agregar event listeners
+  picker.querySelectorAll('.session-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const sessionId = btn.getAttribute('data-session');
+      selectSession(sessionId);
+    });
+  });
+}
+
+function selectSession(sessionId) {
+  const session = SESSION_MODULES[sessionId];
+  if (!session) return;
+
+  // Actualizar título de sesión actual
+  const currentSessionTitle = document.getElementById('currentSessionTitle');
+  if (currentSessionTitle) {
+    currentSessionTitle.textContent = session.title;
+  }
+
+  // Actualizar panel derecho con módulos
+  updateRightPanelWithModules(session.modules);
+
+  // Ocultar menú de sesiones
+  hideSessionMenu();
+
+  // Enviar mensaje al chat sobre la sesión seleccionada
+  sendBotMessage(
+    `Has seleccionado: ${session.title}\n\nElige un módulo del panel derecho para comenzar.`,
+    null,
+    false,
+    false
+  );
+}
+
+function updateRightPanelWithModules(modules) {
+  const studioTiles = document.querySelector('.studio-tiles');
+  if (!studioTiles) return;
+
+  // Limpiar tiles existentes excepto notas
+  const existingTiles = studioTiles.querySelectorAll(
+    '.tile:not([data-action="open-notes"])'
+  );
+  existingTiles.forEach(tile => tile.remove());
+
+  // Agregar botones de módulos
+  modules.forEach(module => {
+    const moduleTile = document.createElement('button');
+    moduleTile.className = 'tile module-tile';
+    moduleTile.setAttribute('data-action', `open-module-${module.id}`);
+    moduleTile.setAttribute('data-module-id', module.id);
+    moduleTile.innerHTML = `
+            <i class='bx bx-book-open'></i>
+            <span>${module.title}</span>
+        `;
+
+    moduleTile.addEventListener('click', () => openModule(module));
+    studioTiles.appendChild(moduleTile);
+  });
+
+  // Actualizar rail también
+  updateStudioRail(modules);
+}
+
+function updateStudioRail(modules) {
+  const studioRail = document.querySelector('.studio-rail');
+  if (!studioRail) return;
+
+  // Limpiar rail existente excepto notas
+  const existingRail = studioRail.querySelectorAll(
+    '.rail-btn:not([data-action="open-notes"])'
+  );
+  existingRail.forEach(btn => btn.remove());
+
+  // Agregar botones de módulos al rail
+  modules.forEach(module => {
+    const moduleBtn = document.createElement('button');
+    moduleBtn.className = 'rail-btn';
+    moduleBtn.setAttribute('data-action', `open-module-${module.id}`);
+    moduleBtn.setAttribute('data-module-id', module.id);
+    moduleBtn.innerHTML = `<i class='bx bx-book-open'></i>`;
+    moduleBtn.title = module.title;
+
+    moduleBtn.addEventListener('click', () => openModule(module));
+    studioRail.appendChild(moduleBtn);
+  });
+}
+
+function openModule(module) {
+  // Crear tarjeta en el panel derecho
+  const cardsContainer = document.getElementById('studioCards');
+  if (!cardsContainer) return;
+
+  const card = document.createElement('div');
+  card.className = 'studio-card module-card';
+  card.innerHTML = `
+        <h4 style="margin:0 0 8px 0">${module.title}</h4>
+        <p style="margin:0 0 12px 0;color:var(--text-muted)">${module.content}</p>
+        <div style="display:flex;gap:8px;margin-top:12px">
+            <button class="keyboard-button" onclick="startModuleQuiz(${module.id})">📝 Cuestionario</button>
+            <button class="keyboard-button" onclick="showModuleContent(${module.id})">📖 Contenido</button>
+            <button class="keyboard-button" onclick="startModuleExercise(${module.id})">💻 Ejercicio</button>
+        </div>
+    `;
+
+  cardsContainer.prepend(card);
+
+  // Enviar mensaje al chat
+  sendBotMessage(
+    `Has abierto: ${module.title}\n\n${module.content}\n\nUsa los botones en la tarjeta para interactuar con el módulo.`,
+    null,
+    false,
+    false
+  );
+}
+
+function startModuleQuiz(moduleId) {
+  const questions = getModuleQuestions(moduleId);
+  sendBotMessage(
+    `📝 Cuestionario del Módulo ${moduleId}\n\n${questions.join('\n\n')}`,
+    null,
+    false,
+    false
+  );
+}
+
+function showModuleContent(moduleId) {
+  const content = getModuleContent(moduleId);
+  sendBotMessage(
+    `📖 Contenido del Módulo ${moduleId}\n\n${content}`,
+    null,
+    false,
+    false
+  );
+}
+
+function startModuleExercise(moduleId) {
+  const exercise = getModuleExercise(moduleId);
+  sendBotMessage(
+    `💻 Ejercicio del Módulo ${moduleId}\n\n${exercise}`,
+    null,
+    false,
+    false
+  );
+}
+
+// Funciones auxiliares para contenido de módulos
+function getModuleQuestions(moduleId) {
+  const questions = {
+    1: [
+      '1. ¿Qué es la inteligencia artificial?',
+      '2. ¿Cuáles son las principales aplicaciones de IA?',
+      '3. ¿Cómo ha evolucionado la IA en los últimos años?',
+    ],
+    2: [
+      '1. ¿Cuál es la diferencia entre ML supervisado y no supervisado?',
+      '2. ¿Qué métricas usarías para evaluar un modelo de clasificación?',
+      '3. ¿Cómo funciona el algoritmo de clustering K-means?',
+    ],
+    3: [
+      '1. ¿Qué es una red neuronal artificial?',
+      '2. ¿Cuándo usarías CNN vs RNN?',
+      '3. ¿Cómo funciona el mecanismo de atención?',
+    ],
+    4: [
+      '1. ¿Qué consideraciones éticas son importantes en IA?',
+      '2. ¿Cómo mitigarías el sesgo en un modelo?',
+      '3. ¿Qué pasos seguirías para desplegar un modelo en producción?',
+    ],
+  };
+  return (
+    questions[moduleId] || ['Pregunta 1: ¿Qué has aprendido en este módulo?']
+  );
+}
+
+function getModuleContent(moduleId) {
+  const content = {
+    1: 'Este módulo introduce los conceptos fundamentales de la inteligencia artificial, incluyendo su definición, historia y aplicaciones principales en el mundo real.',
+    2: 'Aprenderás sobre algoritmos de machine learning, incluyendo clasificación, regresión, clustering y técnicas de evaluación de modelos.',
+    3: 'Explorarás las redes neuronales profundas, incluyendo CNN para imágenes, RNN para secuencias y transformers para lenguaje natural.',
+    4: 'Este módulo cubre aplicaciones prácticas, consideraciones éticas y el proceso de despliegue de modelos de IA en producción.',
+  };
+  return content[moduleId] || 'Contenido del módulo disponible en el curso.';
+}
+
+function getModuleExercise(moduleId) {
+  const exercises = {
+    1: 'Ejercicio: Crea un prompt efectivo para un modelo de IA que explique un concepto técnico a un público general.',
+    2: 'Ejercicio: Implementa un clasificador simple usando scikit-learn y evalúa su rendimiento.',
+    3: 'Ejercicio: Diseña una arquitectura de red neuronal para clasificar imágenes de productos.',
+    4: 'Ejercicio: Desarrolla un plan de despliegue para un modelo de IA considerando ética y escalabilidad.',
+  };
+  return exercises[moduleId] || 'Ejercicio práctico del módulo.';
 }
 
 // Barra de redimensionado del panel izquierdo
 function setupResizableLeft() {
-    const resizer = document.getElementById('leftResizer');
-    if (!resizer) return;
-    let startX = 0;
-    let startWidth = 0;
-    const onMove = (e) => {
-        const delta = (e.clientX || (e.touches && e.touches[0].clientX) || 0) - startX;
-        // Evitar solaparse con el panel derecho: ancho total minus right-col mín.
-        const rightCol = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--right-col') || '360', 10);
-        const maxByLayout = Math.max(220, Math.min(520, startWidth + delta));
-        const maxAllowed = Math.min(maxByLayout, window.innerWidth - rightCol - 400); // deja espacio mínimo para el chat
-        const newWidth = Math.max(220, maxAllowed);
-        document.documentElement.style.setProperty('--left-col', newWidth + 'px');
-        try { localStorage.setItem('ui_left_col', String(newWidth)); } catch(_) {}
-    };
-    const onUp = () => {
-        document.removeEventListener('mousemove', onMove);
-        document.removeEventListener('mouseup', onUp);
-        document.removeEventListener('touchmove', onMove);
-        document.removeEventListener('touchend', onUp);
-    };
-    const onDown = (e) => {
-        e.preventDefault();
-        startX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
-        const leftCol = getComputedStyle(document.documentElement).getPropertyValue('--left-col').trim();
-        startWidth = parseInt(leftCol || '300', 10);
-        document.addEventListener('mousemove', onMove);
-        document.addEventListener('mouseup', onUp);
-        document.addEventListener('touchmove', onMove, { passive: false });
-        document.addEventListener('touchend', onUp);
-    };
-    resizer.addEventListener('mousedown', onDown);
-    resizer.addEventListener('touchstart', onDown, { passive: false });
-
-    // Restaurar último ancho
+  const resizer = document.getElementById('leftResizer');
+  if (!resizer) return;
+  let startX = 0;
+  let startWidth = 0;
+  const onMove = e => {
+    const delta =
+      (e.clientX || (e.touches && e.touches[0].clientX) || 0) - startX;
+    // Evitar solaparse con el panel derecho: ancho total minus right-col mín.
+    const rightCol = parseInt(
+      getComputedStyle(document.documentElement).getPropertyValue(
+        '--right-col'
+      ) || '360',
+      10
+    );
+    const maxByLayout = Math.max(220, Math.min(520, startWidth + delta));
+    const maxAllowed = Math.min(
+      maxByLayout,
+      window.innerWidth - rightCol - 400
+    ); // deja espacio mínimo para el chat
+    const newWidth = Math.max(220, maxAllowed);
+    document.documentElement.style.setProperty('--left-col', newWidth + 'px');
     try {
-        const saved = parseInt(localStorage.getItem('ui_left_col') || '0', 10);
-        if (saved) document.documentElement.style.setProperty('--left-col', saved + 'px');
-    } catch(_) {}
+      localStorage.setItem('ui_left_col', String(newWidth));
+    } catch (_) {}
+  };
+  const onUp = () => {
+    document.removeEventListener('mousemove', onMove);
+    document.removeEventListener('mouseup', onUp);
+    document.removeEventListener('touchmove', onMove);
+    document.removeEventListener('touchend', onUp);
+  };
+  const onDown = e => {
+    e.preventDefault();
+    startX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+    const leftCol = getComputedStyle(document.documentElement)
+      .getPropertyValue('--left-col')
+      .trim();
+    startWidth = parseInt(leftCol || '300', 10);
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+    document.addEventListener('touchmove', onMove, { passive: false });
+    document.addEventListener('touchend', onUp);
+  };
+  resizer.addEventListener('mousedown', onDown);
+  resizer.addEventListener('touchstart', onDown, { passive: false });
+
+  // Restaurar último ancho
+  try {
+    const saved = parseInt(localStorage.getItem('ui_left_col') || '0', 10);
+    if (saved)
+      document.documentElement.style.setProperty('--left-col', saved + 'px');
+  } catch (_) {}
 }
 
 // Barra de redimensionado del panel derecho
 function setupResizableRight() {
-    const resizer = document.getElementById('rightResizer');
-    if (!resizer) return;
-    let startX = 0;
-    let startWidth = 0;
-    const onMove = (e) => {
-        const x = e.clientX || (e.touches && e.touches[0].clientX) || 0;
-        // Como el resizer está en el borde interno, mover a la izquierda (x menor) debe AUMENTAR el ancho
-        const delta = startX - x;
-        const newWidth = Math.max(260, Math.min(520, startWidth + delta));
-        document.documentElement.style.setProperty('--right-col', newWidth + 'px');
-        try { localStorage.setItem('ui_right_col', String(newWidth)); } catch(_) {}
-    };
-    const onUp = () => {
-        document.removeEventListener('mousemove', onMove);
-        document.removeEventListener('mouseup', onUp);
-        document.removeEventListener('touchmove', onMove);
-        document.removeEventListener('touchend', onUp);
-    };
-    const onDown = (e) => {
-        e.preventDefault();
-        startX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
-        const rightCol = getComputedStyle(document.documentElement).getPropertyValue('--right-col').trim();
-        startWidth = parseInt(rightCol || '360', 10);
-        document.addEventListener('mousemove', onMove);
-        document.addEventListener('mouseup', onUp);
-        document.addEventListener('touchmove', onMove, { passive: false });
-        document.addEventListener('touchend', onUp);
-    };
-    resizer.addEventListener('mousedown', onDown);
-    resizer.addEventListener('touchstart', onDown, { passive: false });
-
-    // Restaurar último ancho
+  const resizer = document.getElementById('rightResizer');
+  if (!resizer) return;
+  let startX = 0;
+  let startWidth = 0;
+  const onMove = e => {
+    const x = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+    // Como el resizer está en el borde interno, mover a la izquierda (x menor) debe AUMENTAR el ancho
+    const delta = startX - x;
+    const newWidth = Math.max(260, Math.min(520, startWidth + delta));
+    document.documentElement.style.setProperty('--right-col', newWidth + 'px');
     try {
-        const saved = parseInt(localStorage.getItem('ui_right_col') || '0', 10);
-        if (saved) document.documentElement.style.setProperty('--right-col', saved + 'px');
-    } catch(_) {}
+      localStorage.setItem('ui_right_col', String(newWidth));
+    } catch (_) {}
+  };
+  const onUp = () => {
+    document.removeEventListener('mousemove', onMove);
+    document.removeEventListener('mouseup', onUp);
+    document.removeEventListener('touchmove', onMove);
+    document.removeEventListener('touchend', onUp);
+  };
+  const onDown = e => {
+    e.preventDefault();
+    startX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+    const rightCol = getComputedStyle(document.documentElement)
+      .getPropertyValue('--right-col')
+      .trim();
+    startWidth = parseInt(rightCol || '360', 10);
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+    document.addEventListener('touchmove', onMove, { passive: false });
+    document.addEventListener('touchend', onUp);
+  };
+  resizer.addEventListener('mousedown', onDown);
+  resizer.addEventListener('touchstart', onDown, { passive: false });
+
+  // Restaurar último ancho
+  try {
+    const saved = parseInt(localStorage.getItem('ui_right_col') || '0', 10);
+    if (saved)
+      document.documentElement.style.setProperty('--right-col', saved + 'px');
+  } catch (_) {}
 }
 
 // ===== Videos integrados en panel izquierdo =====
 let currentVideo = null; // { label, url, id }
 function setupVideoPicker() {
-    try {
-        // Toggle colapsable
-        const sec = document.getElementById('videosSection');
-        const btnToggle = document.getElementById('videosToggle');
-        if (sec && btnToggle) {
-            btnToggle.addEventListener('click', () => {
-                const isOpen = sec.classList.toggle('open');
-                btnToggle.setAttribute('aria-expanded', String(isOpen));
-            });
-        }
+  try {
+    // Toggle colapsable
+    const sec = document.getElementById('videosSection');
+    const btnToggle = document.getElementById('videosToggle');
+    if (sec && btnToggle) {
+      btnToggle.addEventListener('click', () => {
+        const isOpen = sec.classList.toggle('open');
+        btnToggle.setAttribute('aria-expanded', String(isOpen));
+      });
+    }
 
-        // Botones de selección
-        document.querySelectorAll('.video-select').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const label = btn.getAttribute('data-video-label');
-                const url = new URL(btn.getAttribute('data-video-url'));
-                let id = url.searchParams.get('v');
-                if (!id && url.pathname) { id = url.pathname.split('/').pop(); }
-                currentVideo = { label, url: url.toString(), id };
-                const mount = document.getElementById('leftVideoPlayerContainer');
-                if (mount) {
-                    mount.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}" allowfullscreen title="${label}"></iframe>`;
-                    mount.classList.add('active');
-                }
-                // Habilitar el tile de resumen de video
-                const tile = document.getElementById('videoSummaryTile');
-                if (tile) tile.classList.remove('disabled');
-                // Si ya hay una tarjeta de resumen abierta, refrescar su contenido
-                const summaryCard = document.querySelector('.studio-card[data-kind="video-summary"]');
-                if (summaryCard) {
-                    const text = summaryCard.querySelector('#videoSummary');
-                    if (text) text.textContent = 'Generando resumen con IA…';
-                    EventBus.emit('ui:openVideo');
-                }
-            });
-        });
- 
-        // Hook para botón de resumen desde el panel derecho
+    // Botones de selección
+    document.querySelectorAll('.video-select').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const label = btn.getAttribute('data-video-label');
+        const url = new URL(btn.getAttribute('data-video-url'));
+        let id = url.searchParams.get('v');
+        if (!id && url.pathname) {
+          id = url.pathname.split('/').pop();
+        }
+        currentVideo = { label, url: url.toString(), id };
+        const mount = document.getElementById('leftVideoPlayerContainer');
+        if (mount) {
+          mount.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}" allowfullscreen title="${label}"></iframe>`;
+          mount.classList.add('active');
+        }
+        // Habilitar el tile de resumen de video
         const tile = document.getElementById('videoSummaryTile');
-        if (tile) {
-            tile.addEventListener('click', () => {
-                // Abrir la tarjeta de resumen dentro del panel derecho
-                EventBus.emit('ui:openVideo');
-            });
+        if (tile) tile.classList.remove('disabled');
+        // Si ya hay una tarjeta de resumen abierta, refrescar su contenido
+        const summaryCard = document.querySelector(
+          '.studio-card[data-kind="video-summary"]'
+        );
+        if (summaryCard) {
+          const text = summaryCard.querySelector('#videoSummary');
+          if (text) text.textContent = 'Generando resumen con IA…';
+          EventBus.emit('ui:openVideo');
         }
+      });
+    });
 
-        // Toggle glosario en panel izquierdo
-        const gsec = document.getElementById('glossarySection');
-        const gtoggle = document.getElementById('glossaryToggle');
-        if (gsec && gtoggle) {
-            gtoggle.addEventListener('click', () => {
-                const isOpen = gsec.classList.toggle('open');
-                gtoggle.setAttribute('aria-expanded', String(isOpen));
-                if (isOpen) renderLeftGlossary();
-            });
-        }
+    // Hook para botón de resumen desde el panel derecho
+    const tile = document.getElementById('videoSummaryTile');
+    if (tile) {
+      tile.addEventListener('click', () => {
+        // Abrir la tarjeta de resumen dentro del panel derecho
+        EventBus.emit('ui:openVideo');
+      });
+    }
 
-        // Livestream: Meet incrustado (si el navegador lo permite)
-        const lsec = document.getElementById('livestreamSection');
-        const ltoggle = document.getElementById('livestreamToggle');
-        if (lsec && ltoggle) {
-            ltoggle.addEventListener('click', () => {
-                const isOpen = lsec.classList.toggle('open');
-                ltoggle.setAttribute('aria-expanded', String(isOpen));
-                if (isOpen) {
-                    const liveMount = document.getElementById('leftLivestreamPlayer');
-                    const notice = document.getElementById('livestreamNotice');
-                    if (liveMount) {
-                        liveMount.innerHTML = '';
-                        liveMount.classList.add('active');
-                        // Zoom Web Client (iframe a zoom.us/wc) — requiere meeting ID y passcode
-                        // Para demo incrustamos el web client con parámetros que el host comparta (meeting id y pwd)
-                        // Nota: Para producción se recomienda Zoom Web SDK con firma generada en backend
-                        const meetingId = (window.ZOOM_MEETING_ID || '').replaceAll('-', '');
-                        const pwd = window.ZOOM_MEETING_PWD || '';
-                        if (!meetingId) {
-                            if (notice) {
-                                notice.style.display = 'block';
-                                notice.textContent = 'Configura window.ZOOM_MEETING_ID y window.ZOOM_MEETING_PWD para cargar el Web Client de Zoom dentro de la app.';
-                            }
-                            return;
-                        }
-                        const zoomUrl = `https://zoom.us/wc/${meetingId}/join?pwd=${encodeURIComponent(pwd)}`;
-                        const iframe = document.createElement('iframe');
-                        iframe.src = zoomUrl;
-                        iframe.allow = 'camera; microphone; display-capture; clipboard-write; autoplay; fullscreen;';
-                        iframe.referrerPolicy = 'no-referrer';
-                        iframe.style.width = '100%';
-                        iframe.style.height = '100%';
-                        iframe.style.border = '0';
-                        // Intento cargar; si falla por X-Frame-Options, aviso
-                        const timer = setTimeout(() => {
-                            if (notice) {
-                                notice.style.display = 'block';
-                                notice.textContent = 'No se pudo cargar el cliente Web de Zoom embebido. Haz clic aquí para abrirlo en esta misma pestaña.';
-                                notice.onclick = () => { window.location.href = zoomUrl; };
-                            }
-                        }, 2000);
-                        iframe.onload = () => { clearTimeout(timer); if (notice) notice.style.display = 'none'; };
-                        liveMount.appendChild(iframe);
-                    }
-                }
-            });
+    // Toggle glosario en panel izquierdo
+    const gsec = document.getElementById('glossarySection');
+    const gtoggle = document.getElementById('glossaryToggle');
+    if (gsec && gtoggle) {
+      gtoggle.addEventListener('click', () => {
+        const isOpen = gsec.classList.toggle('open');
+        gtoggle.setAttribute('aria-expanded', String(isOpen));
+        if (isOpen) renderLeftGlossary();
+      });
+    }
+
+    // Livestream: Meet incrustado (si el navegador lo permite)
+    const lsec = document.getElementById('livestreamSection');
+    const ltoggle = document.getElementById('livestreamToggle');
+    if (lsec && ltoggle) {
+      ltoggle.addEventListener('click', () => {
+        const isOpen = lsec.classList.toggle('open');
+        ltoggle.setAttribute('aria-expanded', String(isOpen));
+        if (isOpen) {
+          const liveMount = document.getElementById('leftLivestreamPlayer');
+          const notice = document.getElementById('livestreamNotice');
+          if (liveMount) {
+            liveMount.innerHTML = '';
+            liveMount.classList.add('active');
+            // Zoom Web Client (iframe a zoom.us/wc) — requiere meeting ID y passcode
+            // Para demo incrustamos el web client con parámetros que el host comparta (meeting id y pwd)
+            // Nota: Para producción se recomienda Zoom Web SDK con firma generada en backend
+            const meetingId = (window.ZOOM_MEETING_ID || '').replaceAll(
+              '-',
+              ''
+            );
+            const pwd = window.ZOOM_MEETING_PWD || '';
+            if (!meetingId) {
+              if (notice) {
+                notice.style.display = 'block';
+                notice.textContent =
+                  'Configura window.ZOOM_MEETING_ID y window.ZOOM_MEETING_PWD para cargar el Web Client de Zoom dentro de la app.';
+              }
+              return;
+            }
+            const zoomUrl = `https://zoom.us/wc/${meetingId}/join?pwd=${encodeURIComponent(pwd)}`;
+            const iframe = document.createElement('iframe');
+            iframe.src = zoomUrl;
+            iframe.allow =
+              'camera; microphone; display-capture; clipboard-write; autoplay; fullscreen;';
+            iframe.referrerPolicy = 'no-referrer';
+            iframe.style.width = '100%';
+            iframe.style.height = '100%';
+            iframe.style.border = '0';
+            // Intento cargar; si falla por X-Frame-Options, aviso
+            const timer = setTimeout(() => {
+              if (notice) {
+                notice.style.display = 'block';
+                notice.textContent =
+                  'No se pudo cargar el cliente Web de Zoom embebido. Haz clic aquí para abrirlo en esta misma pestaña.';
+                notice.onclick = () => {
+                  window.location.href = zoomUrl;
+                };
+              }
+            }, 2000);
+            iframe.onload = () => {
+              clearTimeout(timer);
+              if (notice) notice.style.display = 'none';
+            };
+            liveMount.appendChild(iframe);
+          }
         }
-    } catch (_) {}
+      });
+    }
+  } catch (_) {}
 }
 
 function renderLeftGlossary() {
-    const mount = document.getElementById('glossaryLeftMount');
-    if (!mount) return;
-    mount.innerHTML = `
+  const mount = document.getElementById('glossaryLeftMount');
+  if (!mount) return;
+  mount.innerHTML = `
         <div class="glossary-header"><h5 style="margin:0">Glosario de Términos</h5></div>
         <div class="glossary-subtitle">Selecciona una letra:</div>
         <div class="alphabet-grid" id="gAlpha"></div>
         <div class="glossary-results" id="gResults"><div class="glossary-empty">Selecciona una letra</div></div>
     `;
-    const alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-    const gAlpha = mount.querySelector('#gAlpha');
-    alpha.forEach(letter => {
-        const b = document.createElement('button');
-        b.className = 'alpha-btn'; b.textContent = letter;
-        b.addEventListener('click', () => {
-            const entries = GLOSSARY[letter] || [];
-            const gRes = mount.querySelector('#gResults');
-            if (!entries.length) {
-                gRes.innerHTML = `<div class="glossary-empty">No hay términos para la letra ${letter}</div>`;
-            } else {
-                gRes.innerHTML = entries.map(e => `
+  const alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  const gAlpha = mount.querySelector('#gAlpha');
+  alpha.forEach(letter => {
+    const b = document.createElement('button');
+    b.className = 'alpha-btn';
+    b.textContent = letter;
+    b.addEventListener('click', () => {
+      const entries = GLOSSARY[letter] || [];
+      const gRes = mount.querySelector('#gResults');
+      if (!entries.length) {
+        gRes.innerHTML = `<div class="glossary-empty">No hay términos para la letra ${letter}</div>`;
+      } else {
+        gRes.innerHTML = entries
+          .map(
+            e => `
                     <div class="glossary-item"><div class="term">${e.term}</div><div class="def">${e.def}</div></div>
-                `).join('');
-            }
-        });
-        gAlpha.appendChild(b);
+                `
+          )
+          .join('');
+      }
     });
+    gAlpha.appendChild(b);
+  });
 }
 
 function setupAvatarLightbox() {
-    const img = document.getElementById('botAvatarImg');
-    const lightbox = document.getElementById('avatarLightbox');
-    const lbImg = document.getElementById('avatarLightboxImg');
-    const lbClose = document.getElementById('avatarLightboxClose');
-    if (!img || !lightbox || !lbImg) return;
-    const open = () => { lightbox.classList.add('show'); };
-    const close = () => { lightbox.classList.remove('show'); };
-    img.addEventListener('click', open);
-    lightbox.addEventListener('click', (e) => { if (e.target === lightbox || e.target === lbClose) close(); });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+  const img = document.getElementById('botAvatarImg');
+  const lightbox = document.getElementById('avatarLightbox');
+  const lbImg = document.getElementById('avatarLightboxImg');
+  const lbClose = document.getElementById('avatarLightboxClose');
+  if (!img || !lightbox || !lbImg) return;
+  const open = () => {
+    lightbox.classList.add('show');
+  };
+  const close = () => {
+    lightbox.classList.remove('show');
+  };
+  img.addEventListener('click', open);
+  lightbox.addEventListener('click', e => {
+    if (e.target === lightbox || e.target === lbClose) close();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') close();
+  });
 }
 
 // ===== Chat del Livestream en Tiempo Real =====
 let livestreamSocket = null;
 let livestreamChatState = {
-    isConnected: false,
-    username: '',
-    messages: [],
-    connectedUsers: []
+  isConnected: false,
+  username: '',
+  messages: [],
+  connectedUsers: [],
 };
 
 function initializeLivestreamChat() {
-    // Verificar que Socket.IO está disponible
-    if (typeof io === 'undefined') {
-        console.error('Socket.IO no está disponible');
-        return;
-    }
+  // Verificar que Socket.IO está disponible
+  if (typeof io === 'undefined') {
+    console.error('Socket.IO no está disponible');
+    return;
+  }
 
-    // Configurar elementos del DOM
-    const messageInput = document.getElementById('livestreamMessageInput');
-    const sendBtn = document.getElementById('livestreamSendBtn');
+  // Configurar elementos del DOM
+  const messageInput = document.getElementById('livestreamMessageInput');
+  const sendBtn = document.getElementById('livestreamSendBtn');
+  const messagesContainer = document.getElementById('livestreamChatMessages');
+  const connectionStatus = document.getElementById(
+    'livestreamConnectionStatus'
+  );
+  const usersCount = document.getElementById('livestreamUsersCount');
+
+  if (!messageInput || !sendBtn || !messagesContainer) {
+    console.error('Elementos del chat del livestream no encontrados');
+    return;
+  }
+
+  // Inicializar conexión Socket.IO
+  livestreamSocket = io();
+
+  // Generar nombre de usuario automáticamente
+  livestreamChatState.username = `Usuario_${Math.floor(Math.random() * 1000)}`;
+
+  // Eventos de conexión
+  livestreamSocket.on('connect', () => {
+    console.log('Conectado al chat del livestream');
+    livestreamChatState.isConnected = true;
+    updateConnectionStatus('Conectado', true);
+
+    // Unirse al chat del livestream
+    livestreamSocket.emit('join-livestream-chat', {
+      username: livestreamChatState.username,
+    });
+
+    // Habilitar interfaz
+    messageInput.disabled = false;
+    sendBtn.disabled = false;
+  });
+
+  livestreamSocket.on('disconnect', () => {
+    console.log('Desconectado del chat del livestream');
+    livestreamChatState.isConnected = false;
+    updateConnectionStatus('Desconectado', false);
+
+    // Deshabilitar interfaz
+    messageInput.disabled = true;
+    sendBtn.disabled = true;
+  });
+
+  // Eventos del chat
+  livestreamSocket.on('new-livestream-message', messageData => {
+    addLivestreamMessage(messageData);
+  });
+
+  livestreamSocket.on('user-joined', data => {
+    addLivestreamMessage(data);
+  });
+
+  livestreamSocket.on('user-left', data => {
+    addLivestreamMessage(data);
+  });
+
+  livestreamSocket.on('users-list', users => {
+    livestreamChatState.connectedUsers = users;
+    updateUsersCount(users.length);
+  });
+
+  // Eventos de la interfaz
+  sendBtn.addEventListener('click', sendLivestreamMessage);
+
+  messageInput.addEventListener('keypress', e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendLivestreamMessage();
+    }
+  });
+
+  function sendLivestreamMessage() {
+    const message = messageInput.value.trim();
+    if (!message || !livestreamChatState.isConnected) return;
+
+    livestreamSocket.emit('livestream-message', {
+      message: message,
+    });
+
+    messageInput.value = '';
+  }
+
+  function addLivestreamMessage(messageData) {
     const messagesContainer = document.getElementById('livestreamChatMessages');
-    const connectionStatus = document.getElementById('livestreamConnectionStatus');
-    const usersCount = document.getElementById('livestreamUsersCount');
+    if (!messagesContainer) return;
 
-    if (!messageInput || !sendBtn || !messagesContainer) {
-        console.error('Elementos del chat del livestream no encontrados');
-        return;
+    // Remover mensaje de bienvenida si existe
+    const welcomeMessage = messagesContainer.querySelector('.welcome-message');
+    if (welcomeMessage) {
+      welcomeMessage.remove();
     }
 
-    // Inicializar conexión Socket.IO
-    livestreamSocket = io();
+    const messageElement = document.createElement('div');
+    messageElement.className = `livestream-message ${messageData.type}`;
 
-    // Generar nombre de usuario automáticamente
-    livestreamChatState.username = `Usuario_${Math.floor(Math.random() * 1000)}`;
-
-    // Eventos de conexión
-    livestreamSocket.on('connect', () => {
-        console.log('Conectado al chat del livestream');
-        livestreamChatState.isConnected = true;
-        updateConnectionStatus('Conectado', true);
-        
-        // Unirse al chat del livestream
-        livestreamSocket.emit('join-livestream-chat', {
-            username: livestreamChatState.username
-        });
-
-        // Habilitar interfaz
-        messageInput.disabled = false;
-        sendBtn.disabled = false;
+    const time = new Date(messageData.timestamp).toLocaleTimeString('es-ES', {
+      hour: '2-digit',
+      minute: '2-digit',
     });
 
-    livestreamSocket.on('disconnect', () => {
-        console.log('Desconectado del chat del livestream');
-        livestreamChatState.isConnected = false;
-        updateConnectionStatus('Desconectado', false);
-        
-        // Deshabilitar interfaz
-        messageInput.disabled = true;
-        sendBtn.disabled = true;
-    });
-
-    // Eventos del chat
-    livestreamSocket.on('new-livestream-message', (messageData) => {
-        addLivestreamMessage(messageData);
-    });
-
-    livestreamSocket.on('user-joined', (data) => {
-        addLivestreamMessage(data);
-    });
-
-    livestreamSocket.on('user-left', (data) => {
-        addLivestreamMessage(data);
-    });
-
-    livestreamSocket.on('users-list', (users) => {
-        livestreamChatState.connectedUsers = users;
-        updateUsersCount(users.length);
-    });
-
-    // Eventos de la interfaz
-    sendBtn.addEventListener('click', sendLivestreamMessage);
-    
-    messageInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            sendLivestreamMessage();
-        }
-    });
-
-    function sendLivestreamMessage() {
-        const message = messageInput.value.trim();
-        if (!message || !livestreamChatState.isConnected) return;
-
-        livestreamSocket.emit('livestream-message', {
-            message: message
-        });
-
-        messageInput.value = '';
-    }
-
-    function addLivestreamMessage(messageData) {
-        const messagesContainer = document.getElementById('livestreamChatMessages');
-        if (!messagesContainer) return;
-
-        // Remover mensaje de bienvenida si existe
-        const welcomeMessage = messagesContainer.querySelector('.welcome-message');
-        if (welcomeMessage) {
-            welcomeMessage.remove();
-        }
-
-        const messageElement = document.createElement('div');
-        messageElement.className = `livestream-message ${messageData.type}`;
-        
-        const time = new Date(messageData.timestamp).toLocaleTimeString('es-ES', {
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-
-        if (messageData.type === 'system') {
-            messageElement.innerHTML = `
+    if (messageData.type === 'system') {
+      messageElement.innerHTML = `
                 <div class="message-content system">
                     <i class='bx bx-info-circle'></i>
                     <span>${messageData.message}</span>
                     <span class="timestamp">${time}</span>
                 </div>
             `;
-        } else {
-            const isOwnMessage = messageData.username === livestreamChatState.username;
-            messageElement.innerHTML = `
+    } else {
+      const isOwnMessage =
+        messageData.username === livestreamChatState.username;
+      messageElement.innerHTML = `
                 <div class="message-content user ${isOwnMessage ? 'own' : ''}">
                     <div class="message-header">
                         <span class="username">${messageData.username}</span>
@@ -2423,39 +3015,39 @@ function initializeLivestreamChat() {
                     <div class="message-text">${messageData.message}</div>
                 </div>
             `;
-        }
-
-        messagesContainer.appendChild(messageElement);
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-
-        // Mantener solo los últimos 50 mensajes
-        const messages = messagesContainer.querySelectorAll('.livestream-message');
-        if (messages.length > 50) {
-            messages[0].remove();
-        }
     }
 
-    function updateConnectionStatus(status, isConnected) {
-        const statusIndicator = connectionStatus.querySelector('.status-indicator');
-        const statusText = connectionStatus.querySelector('.status-text');
-        
-        if (statusIndicator && statusText) {
-            statusIndicator.className = `status-indicator ${isConnected ? 'online' : 'offline'}`;
-            statusText.textContent = status;
-        }
-    }
+    messagesContainer.appendChild(messageElement);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
-    function updateUsersCount(count) {
-        if (usersCount) {
-            usersCount.textContent = `${count} usuario${count !== 1 ? 's' : ''}`;
-        }
+    // Mantener solo los últimos 50 mensajes
+    const messages = messagesContainer.querySelectorAll('.livestream-message');
+    if (messages.length > 50) {
+      messages[0].remove();
     }
+  }
+
+  function updateConnectionStatus(status, isConnected) {
+    const statusIndicator = connectionStatus.querySelector('.status-indicator');
+    const statusText = connectionStatus.querySelector('.status-text');
+
+    if (statusIndicator && statusText) {
+      statusIndicator.className = `status-indicator ${isConnected ? 'online' : 'offline'}`;
+      statusText.textContent = status;
+    }
+  }
+
+  function updateUsersCount(count) {
+    if (usersCount) {
+      usersCount.textContent = `${count} usuario${count !== 1 ? 's' : ''}`;
+    }
+  }
 }
 
 // Inicializar chat del livestream cuando se carga la página
 document.addEventListener('DOMContentLoaded', () => {
-    // Delay para asegurar que Socket.IO se carga primero
-    setTimeout(() => {
-        initializeLivestreamChat();
-    }, 1000);
+  // Delay para asegurar que Socket.IO se carga primero
+  setTimeout(() => {
+    initializeLivestreamChat();
+  }, 1000);
 });

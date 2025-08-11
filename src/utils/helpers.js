@@ -9,7 +9,7 @@ export function formatDate(date) {
     month: 'long',
     day: 'numeric',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
   }).format(date);
 }
 
@@ -64,13 +64,13 @@ export function debounce(func, wait) {
 // Throttle function
 export function throttle(func, limit) {
   let inThrottle;
-  return function() {
+  return function () {
     const args = arguments;
     const context = this;
     if (!inThrottle) {
       func.apply(context, args);
       inThrottle = true;
-      setTimeout(() => inThrottle = false, limit);
+      setTimeout(() => (inThrottle = false), limit);
     }
   };
 }
@@ -84,7 +84,7 @@ export const storage = {
       console.warn('Error saving to localStorage:', e);
     }
   },
-  
+
   get: (key, defaultValue = null) => {
     try {
       const item = localStorage.getItem(key);
@@ -94,14 +94,14 @@ export const storage = {
       return defaultValue;
     }
   },
-  
-  remove: (key) => {
+
+  remove: key => {
     try {
       localStorage.removeItem(key);
     } catch (e) {
       console.warn('Error removing from localStorage:', e);
     }
-  }
+  },
 };
 
 // Validar entrada de usuario
@@ -109,16 +109,19 @@ export function validateUserInput(input) {
   if (!input || typeof input !== 'string') {
     return { isValid: false, error: 'Entrada inválida' };
   }
-  
+
   const trimmed = input.trim();
   if (trimmed.length === 0) {
     return { isValid: false, error: 'El mensaje no puede estar vacío' };
   }
-  
+
   if (trimmed.length > 500) {
-    return { isValid: false, error: 'El mensaje es demasiado largo (máximo 500 caracteres)' };
+    return {
+      isValid: false,
+      error: 'El mensaje es demasiado largo (máximo 500 caracteres)',
+    };
   }
-  
+
   return { isValid: true, value: trimmed };
 }
 
@@ -138,7 +141,11 @@ export function getRandomResponse(responses) {
 // Detectar tipo de dispositivo
 export function detectDevice() {
   const userAgent = navigator.userAgent;
-  if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)) {
+  if (
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      userAgent
+    )
+  ) {
     return 'mobile';
   }
   return 'desktop';
@@ -146,5 +153,8 @@ export function detectDevice() {
 
 // Verificar si está en modo oscuro
 export function isDarkMode() {
-  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-} 
+  return (
+    window.matchMedia &&
+    window.matchMedia('(prefers-color-scheme: dark)').matches
+  );
+}
